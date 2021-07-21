@@ -35,7 +35,7 @@ namespace Widely.API.Controllers
         /// <remarks>
         /// Sample request:
         ///
-        ///     POST /Todogit init --initial-branch=mai
+        ///     POST /Todo
         ///    
         ///     {
         ///        "username": "widelyusername",
