@@ -1,0 +1,12 @@
+D:\WidelyNext\WidelyStandartV3\WIDELY.STANDART2021\Widely.DataAccess\bin\Debug\net5.0\Widely.DataAccess.deps.json
+D:\WidelyNext\WidelyStandartV3\WIDELY.STANDART2021\Widely.DataAccess\bin\Debug\net5.0\Widely.DataAccess.dll
+D:\WidelyNext\WidelyStandartV3\WIDELY.STANDART2021\Widely.DataAccess\bin\Debug\net5.0\ref\Widely.DataAccess.dll
+D:\WidelyNext\WidelyStandartV3\WIDELY.STANDART2021\Widely.DataAccess\bin\Debug\net5.0\Widely.DataAccess.pdb
+D:\WidelyNext\WidelyStandartV3\WIDELY.STANDART2021\Widely.DataAccess\obj\Debug\net5.0\Widely.DataAccess.csproj.AssemblyReference.cache
+D:\WidelyNext\WidelyStandartV3\WIDELY.STANDART2021\Widely.DataAccess\obj\Debug\net5.0\Widely.DataAccess.GeneratedMSBuildEditorConfig.editorconfig
+D:\WidelyNext\WidelyStandartV3\WIDELY.STANDART2021\Widely.DataAccess\obj\Debug\net5.0\Widely.DataAccess.AssemblyInfoInputs.cache
+D:\WidelyNext\WidelyStandartV3\WIDELY.STANDART2021\Widely.DataAccess\obj\Debug\net5.0\Widely.DataAccess.AssemblyInfo.cs
+D:\WidelyNext\WidelyStandartV3\WIDELY.STANDART2021\Widely.DataAccess\obj\Debug\net5.0\Widely.DataAccess.csproj.CoreCompileInputs.cache
+D:\WidelyNext\WidelyStandartV3\WIDELY.STANDART2021\Widely.DataAccess\obj\Debug\net5.0\Widely.DataAccess.dll
+D:\WidelyNext\WidelyStandartV3\WIDELY.STANDART2021\Widely.DataAccess\obj\Debug\net5.0\ref\Widely.DataAccess.dll
+D:\WidelyNext\WidelyStandartV3\WIDELY.STANDART2021\Widely.DataAccess\obj\Debug\net5.0\Widely.DataAccess.pdb

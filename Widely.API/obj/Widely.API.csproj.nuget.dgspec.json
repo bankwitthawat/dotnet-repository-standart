@@ -1,0 +1,335 @@
+{
+  "format": 1,
+  "restore": {
+    "D:\\WidelyNext\\WidelyStandartV3\\WIDELY.STANDART2021\\Widely.API\\Widely.API.csproj": {}
+  },
+  "projects": {
+    "D:\\WidelyNext\\WidelyStandartV3\\WIDELY.STANDART2021\\Widely.API\\Widely.API.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\WidelyNext\\WidelyStandartV3\\WIDELY.STANDART2021\\Widely.API\\Widely.API.csproj",
+        "projectName": "Widely.API",
+        "projectPath": "D:\\WidelyNext\\WidelyStandartV3\\WIDELY.STANDART2021\\Widely.API\\Widely.API.csproj",
+        "packagesPath": "C:\\Users\\bankwitthawat\\.nuget\\packages\\",
+        "outputPath": "D:\\WidelyNext\\WidelyStandartV3\\WIDELY.STANDART2021\\Widely.API\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\bankwitthawat\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net5.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net5.0": {
+            "targetAlias": "net5.0",
+            "projectReferences": {
+              "D:\\WidelyNext\\WidelyStandartV3\\WIDELY.STANDART2021\\Widely.BusinessLogic\\Widely.BusinessLogic.csproj": {
+                "projectPath": "D:\\WidelyNext\\WidelyStandartV3\\WIDELY.STANDART2021\\Widely.BusinessLogic\\Widely.BusinessLogic.csproj"
+              },
+              "D:\\WidelyNext\\WidelyStandartV3\\WIDELY.STANDART2021\\Widely.DataAccess\\Widely.DataAccess.csproj": {
+                "projectPath": "D:\\WidelyNext\\WidelyStandartV3\\WIDELY.STANDART2021\\Widely.DataAccess\\Widely.DataAccess.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net5.0": {
+          "targetAlias": "net5.0",
+          "dependencies": {
+            "AutoMapper.Extensions.Microsoft.DependencyInjection": {
+              "target": "Package",
+              "version": "[8.1.1, )"
+            },
+            "Microsoft.AspNetCore.Authentication.JwtBearer": {
+              "target": "Package",
+              "version": "[5.0.8, )"
+            },
+            "Microsoft.AspNetCore.Http": {
+              "target": "Package",
+              "version": "[2.2.2, )"
+            },
+            "MySql.Data": {
+              "target": "Package",
+              "version": "[8.0.26, )"
+            },
+            "NLog": {
+              "target": "Package",
+              "version": "[4.7.10, )"
+            },
+            "NLog.Web.AspNetCore": {
+              "target": "Package",
+              "version": "[4.13.0, )"
+            },
+            "Pomelo.EntityFrameworkCore.MySql": {
+              "target": "Package",
+              "version": "[5.0.1, )"
+            },
+            "Swashbuckle.AspNetCore": {
+              "target": "Package",
+              "version": "[5.6.3, )"
+            },
+            "Swashbuckle.AspNetCore.Annotations": {
+              "target": "Package",
+              "version": "[6.1.4, )"
+            },
+            "System.Configuration.ConfigurationManager": {
+              "target": "Package",
+              "version": "[5.0.0, )"
+            },
+            "System.IdentityModel.Tokens.Jwt": {
+              "target": "Package",
+              "version": "[6.11.1, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.AspNetCore.App": {
+              "privateAssets": "none"
+            },
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.301\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "D:\\WidelyNext\\WidelyStandartV3\\WIDELY.STANDART2021\\Widely.BusinessLogic\\Widely.BusinessLogic.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\WidelyNext\\WidelyStandartV3\\WIDELY.STANDART2021\\Widely.BusinessLogic\\Widely.BusinessLogic.csproj",
+        "projectName": "Widely.BusinessLogic",
+        "projectPath": "D:\\WidelyNext\\WidelyStandartV3\\WIDELY.STANDART2021\\Widely.BusinessLogic\\Widely.BusinessLogic.csproj",
+        "packagesPath": "C:\\Users\\bankwitthawat\\.nuget\\packages\\",
+        "outputPath": "D:\\WidelyNext\\WidelyStandartV3\\WIDELY.STANDART2021\\Widely.BusinessLogic\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\bankwitthawat\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net5.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net5.0": {
+            "targetAlias": "net5.0",
+            "projectReferences": {
+              "D:\\WidelyNext\\WidelyStandartV3\\WIDELY.STANDART2021\\Widely.DataAccess\\Widely.DataAccess.csproj": {
+                "projectPath": "D:\\WidelyNext\\WidelyStandartV3\\WIDELY.STANDART2021\\Widely.DataAccess\\Widely.DataAccess.csproj"
+              },
+              "D:\\WidelyNext\\WidelyStandartV3\\WIDELY.STANDART2021\\Widely.DataModel\\Widely.DataModel.csproj": {
+                "projectPath": "D:\\WidelyNext\\WidelyStandartV3\\WIDELY.STANDART2021\\Widely.DataModel\\Widely.DataModel.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net5.0": {
+          "targetAlias": "net5.0",
+          "dependencies": {
+            "AutoMapper.Extensions.Microsoft.DependencyInjection": {
+              "target": "Package",
+              "version": "[8.1.1, )"
+            },
+            "Microsoft.AspNetCore.Authentication.JwtBearer": {
+              "target": "Package",
+              "version": "[5.0.8, )"
+            },
+            "Microsoft.AspNetCore.Http": {
+              "target": "Package",
+              "version": "[2.2.2, )"
+            },
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[5.0.8, )"
+            },
+            "Pomelo.EntityFrameworkCore.MySql": {
+              "target": "Package",
+              "version": "[5.0.1, )"
+            },
+            "System.IdentityModel.Tokens.Jwt": {
+              "target": "Package",
+              "version": "[6.11.1, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.301\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "D:\\WidelyNext\\WidelyStandartV3\\WIDELY.STANDART2021\\Widely.DataAccess\\Widely.DataAccess.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\WidelyNext\\WidelyStandartV3\\WIDELY.STANDART2021\\Widely.DataAccess\\Widely.DataAccess.csproj",
+        "projectName": "Widely.DataAccess",
+        "projectPath": "D:\\WidelyNext\\WidelyStandartV3\\WIDELY.STANDART2021\\Widely.DataAccess\\Widely.DataAccess.csproj",
+        "packagesPath": "C:\\Users\\bankwitthawat\\.nuget\\packages\\",
+        "outputPath": "D:\\WidelyNext\\WidelyStandartV3\\WIDELY.STANDART2021\\Widely.DataAccess\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\bankwitthawat\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net5.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net5.0": {
+            "targetAlias": "net5.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net5.0": {
+          "targetAlias": "net5.0",
+          "dependencies": {
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[5.0.8, )"
+            },
+            "Pomelo.EntityFrameworkCore.MySql": {
+              "target": "Package",
+              "version": "[5.0.1, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.301\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "D:\\WidelyNext\\WidelyStandartV3\\WIDELY.STANDART2021\\Widely.DataModel\\Widely.DataModel.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\WidelyNext\\WidelyStandartV3\\WIDELY.STANDART2021\\Widely.DataModel\\Widely.DataModel.csproj",
+        "projectName": "Widely.DataModel",
+        "projectPath": "D:\\WidelyNext\\WidelyStandartV3\\WIDELY.STANDART2021\\Widely.DataModel\\Widely.DataModel.csproj",
+        "packagesPath": "C:\\Users\\bankwitthawat\\.nuget\\packages\\",
+        "outputPath": "D:\\WidelyNext\\WidelyStandartV3\\WIDELY.STANDART2021\\Widely.DataModel\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\bankwitthawat\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net5.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net5.0": {
+            "targetAlias": "net5.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net5.0": {
+          "targetAlias": "net5.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.301\\RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}

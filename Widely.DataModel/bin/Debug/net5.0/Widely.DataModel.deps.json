@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v5.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v5.0": {
+      "Widely.DataModel/1.0.0": {
+        "runtime": {
+          "Widely.DataModel.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Widely.DataModel/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
