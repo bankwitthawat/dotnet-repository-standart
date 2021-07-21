@@ -77,7 +77,7 @@ namespace Widely.API
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, NLog.ILogger logger)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -88,8 +88,8 @@ namespace Widely.API
                 app.UseConfiguredSwaggerUI();
             }
 
-            //add exception middleware
-            app.ConfigureExceptionHandler(logger);
+            // global error handler
+            app.UseMiddleware<ExceptionMiddlewareExtensions>();
 
             app.UseHttpsRedirection();
 
