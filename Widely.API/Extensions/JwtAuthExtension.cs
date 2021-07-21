@@ -8,9 +8,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Widely.API.Infrastructure.Security
+namespace Widely.API.Extensions
 {
-    public static class JwtAuthentication
+    public static class JwtAuthExtension
     {
         public static void AddJwtAuthentication(this IServiceCollection services, IConfiguration configuration)
         {
@@ -31,7 +31,7 @@ namespace Widely.API.Infrastructure.Security
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration.GetSection("JwtSetting:AccessSecret").Value)),
 
-                     // set clockskew to zero so tokens expire exactly at token expiration time (instead of 5 minutes later)
+                    // set clockskew to zero so tokens expire exactly at token expiration time (instead of 5 minutes later)
                     ClockSkew = TimeSpan.Zero
                 };
             });

@@ -17,15 +17,17 @@ namespace Widely.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthController : ControllerBase 
+    public class AuthController : ControllerBase
     {
-        private readonly ILogger<AuthController> _logger;
         private readonly AuthService _authService;
-        public static string _logStatus = "";
-        public AuthController(AuthService authService, ILogger<AuthController> logger)  
+        private readonly BaseService _baseService;
+        private readonly Logger _logger;
+        public AuthController(AuthService authService, BaseService baseService)
         {
-            this._logger = logger;
             this._authService = authService;
+            this._baseService = baseService;
+
+            _logger = NLog.LogManager.GetCurrentClassLogger();
         }
 
         #region LogIn
@@ -47,20 +49,37 @@ namespace Widely.API.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login(LogInRequest request)
         {
-            using var _logUsername = MappedDiagnosticsLogicalContext.SetScoped("username", request.Username);
-            using var _logAction = MappedDiagnosticsLogicalContext.SetScoped("action", "Login");
+            #region Logging
+            _logger
+               .WithProperty("username", request.Username)
+               .WithProperty("action", "LogIn")
+               .WithProperty("status", "Request")
+               .Debug("{user} is logging in.", request.Username);
+            #endregion
 
             var response = await this._authService.Login(request);
 
             if (!response.Success)
             {
-                using var _logStatusFail = MappedDiagnosticsLogicalContext.SetScoped("status", "Failure");
-                _logger.LogDebug("Signed in fail {user}", request.Username);
+                #region Logging
+                _logger
+                    .WithProperty("username", request.Username)
+                    .WithProperty("action", "LogIn")
+                    .WithProperty("status", "Failure")
+                    .Debug("Logged in fail {user}", request.Username);
+                #endregion
+
                 return Unauthorized(response);
             }
 
-            using var _logStatusSuccess = MappedDiagnosticsLogicalContext.SetScoped("status", "Success");
-            _logger.LogDebug("Signed in success {user}", request.Username);
+            #region Logging
+            _logger
+               .WithProperty("username", request.Username)
+               .WithProperty("action", "LogIn")
+               .WithProperty("status", "Success")
+               .Debug("Logged in success {user}", request.Username);
+            #endregion
+
             return Ok(response);
         }
         #endregion
@@ -82,18 +101,45 @@ namespace Widely.API.Controllers
         [HttpPost("refreshtoken")]
         public async Task<IActionResult> RefreshToken(RefreshTokenRequest tokenRequest)
         {
+            #region Logging
+            _logger
+                .WithProperty("username", this._baseService.GetUserName())
+                .WithProperty("action", "RefreshToken")
+                .WithProperty("status", "Request")
+                .Debug("request by token : {token}", tokenRequest.Token);
+            #endregion
+
             if (string.IsNullOrEmpty(tokenRequest.Token))
+            {
+                #region Logging
+                _logger
+                   .WithProperty("username", this._baseService.GetUserName())
+                   .WithProperty("action", "RefreshToken")
+                   .WithProperty("status", "Failure")
+                   .Debug("Token is required.");
+                #endregion
+
                 return Unauthorized(new { message = "Token is required" });
+            }
 
             var response = await this._authService.RefreshToken(tokenRequest.Token);
 
             if (!response.Success)
             {
-                //_logger.LogDebug("Signed in fail {user}", tokenRequest.Username);
-                return Unauthorized();
+                #region Logging
+                _logger
+                   .WithProperty("username", this._baseService.GetUserName())
+                   .WithProperty("action", "RefreshToken")
+                   .WithProperty("status", "Failure")
+                   .Debug("failed by token : {token}", tokenRequest.Token);
+                #endregion
+
+                return Unauthorized(response);
             }
 
+            #region Logging
 
+            #endregion
 
             return Ok(response);
 

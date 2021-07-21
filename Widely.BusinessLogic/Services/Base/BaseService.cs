@@ -35,6 +35,7 @@ namespace Widely.BusinessLogic.Services.Base
         //    return result;
         //}
         public string GetUserID() => _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+        public string GetUserName() => _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Name);
         public int GetRoleId() => Convert.ToInt32(_httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Role));
         //public List<AuthorizeAppmoduleEntity> GetCurrentAuthorizeModule() => JsonConvert.DeserializeObject<List<AuthorizeAppmoduleEntity>>(_httpContextAccessor.HttpContext.User.Claims
         //            .FirstOrDefault(x => x.Type == "appauthorize").Value);

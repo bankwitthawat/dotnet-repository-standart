@@ -128,25 +128,25 @@ namespace Widely.BusinessLogic.Services.Auth
         public async Task<ServiceResponse<LogInResponse>> RefreshToken(string oldToken)
         {
             ServiceResponse<LogInResponse> response = new ServiceResponse<LogInResponse>();
-            var tokenAge = Convert.ToInt32(_configuration.GetSection("AppSettings:ExpireMins").Value);
+            var tokenAge = Convert.ToInt32(_configuration.GetSection("JwtSetting:ExpireMins").Value);
             var tokenExpire = DateTime.Now.AddMinutes(tokenAge);
 
             try
             {
                 var username = GetUserID();
                 if (string.IsNullOrEmpty(username))
-                    return null;
+                    return response;
 
                 var userRepository = _unitOfWork.AsyncRepository<Appusers>();
                 var authTokenRepository = _unitOfWork.AsyncRepository<Authtokens>();
 
                 var user = await _authRepository.GetUserRelatedByToken(oldToken);
                 if (user == null)
-                    return null;
+                    return response;
 
                 var refreshToken = user.Authtokens.Single(x => x.Token == oldToken);
                 if (refreshToken == null)
-                    return null;
+                    return response;
 
                 var newRefreshToken = _mapper.Map<Authtokens>(_jwtManager.GenerateRefreshToken(GetIpAddress(), GetUserAgnet(), GetMachineName()));
                 user.Authtokens.Add(newRefreshToken);
