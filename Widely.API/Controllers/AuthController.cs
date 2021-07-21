@@ -17,7 +17,7 @@ namespace Widely.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthController : ControllerBase
+    public class AuthController : ControllerBase 
     {
         private readonly ILogger<AuthController> _logger;
         private readonly AuthService _authService;
