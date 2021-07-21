@@ -22,7 +22,7 @@ namespace Widely.API.Controllers
         private readonly ILogger<AuthController> _logger;
         private readonly AuthService _authService;
         public static string _logStatus = "";
-        public AuthController(AuthService authService, ILogger<AuthController> logger)
+        public AuthController(AuthService authService, ILogger<AuthController> logger)  
         {
             this._logger = logger;
             this._authService = authService;
