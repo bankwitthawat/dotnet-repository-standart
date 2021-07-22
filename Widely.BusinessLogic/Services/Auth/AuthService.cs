@@ -110,7 +110,7 @@ namespace Widely.BusinessLogic.Services.Auth
 
                 throw;
             }
-            
+
 
             return response;
         }
@@ -131,39 +131,33 @@ namespace Widely.BusinessLogic.Services.Auth
             var tokenAge = Convert.ToInt32(_configuration.GetSection("JwtSetting:ExpireMins").Value);
             var tokenExpire = DateTime.Now.AddMinutes(tokenAge);
 
-            try
-            {
-                var username = GetUserID();
-                if (string.IsNullOrEmpty(username))
-                    return response;
+            var username = GetUserID();
+            if (string.IsNullOrEmpty(username))
+                return response;
 
-                var userRepository = _unitOfWork.AsyncRepository<Appusers>();
-                var authTokenRepository = _unitOfWork.AsyncRepository<Authtokens>();
+            var userRepository = _unitOfWork.AsyncRepository<Appusers>();
+            var authTokenRepository = _unitOfWork.AsyncRepository<Authtokens>();
 
-                var user = await _authRepository.GetUserRelatedByToken(oldToken);
-                if (user == null)
-                    return response;
+            var user = await _authRepository.GetUserRelatedByToken(oldToken);
+            if (user == null)
+                return response;
 
-                var refreshToken = user.Authtokens.Single(x => x.Token == oldToken);
-                if (refreshToken == null)
-                    return response;
+            var refreshToken = user.Authtokens.Single(x => x.Token == oldToken);
+            if (refreshToken == null)
+                return response;
 
-                var newRefreshToken = _mapper.Map<Authtokens>(_jwtManager.GenerateRefreshToken(GetIpAddress(), GetUserAgnet(), GetMachineName()));
-                user.Authtokens.Add(newRefreshToken);
-                await userRepository.UpdateAsync(user);
-                await authTokenRepository.RemoveAsync(refreshToken);
+            var newRefreshToken = _mapper.Map<Authtokens>(_jwtManager.GenerateRefreshToken(GetIpAddress(), GetUserAgnet(), GetMachineName()));
+            user.Authtokens.Add(newRefreshToken);
+            await userRepository.UpdateAsync(user);
+            await authTokenRepository.RemoveAsync(refreshToken);
 
 
-                response.Data = this.GetLoginUserInfo(user);
-                response.Data.RefreshToken = newRefreshToken.Token;
-                response.Data.TokenExpire = tokenExpire;
-                response.Data.TokenTimeoutMins = ((int)tokenExpire.Subtract(DateTime.Now).TotalMinutes) - 1;
+            response.Data = this.GetLoginUserInfo(user);
+            response.Data.RefreshToken = newRefreshToken.Token;
+            response.Data.TokenExpire = tokenExpire;
+            response.Data.TokenTimeoutMins = ((int)tokenExpire.Subtract(DateTime.Now).TotalMinutes) - 1;
 
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
+
 
             await _unitOfWork.CommitAsync();
 
@@ -197,7 +191,8 @@ namespace Widely.BusinessLogic.Services.Auth
                     Fname = registerRequest.fName,
                     Lname = registerRequest.lName,
                     CreatedDate = DateTime.Now,
-                    CreatedBy = "System"
+                    CreatedBy = "System",
+                    IsActive = true
                 };
 
                 await userRepository.AddAsync(newUser);

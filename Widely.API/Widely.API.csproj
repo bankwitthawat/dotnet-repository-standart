@@ -26,6 +26,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Widely.BusinessLogic\Widely.BusinessLogic.csproj" />
     <ProjectReference Include="..\Widely.DataAccess\Widely.DataAccess.csproj" />
+
   </ItemGroup>
 
 </Project>

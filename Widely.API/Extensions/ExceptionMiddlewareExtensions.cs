@@ -8,7 +8,7 @@ using System.Linq;
 using System.Net;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Widely.API.Infrastructure.Error;
+using Widely.API.Infrastructure.Exceptions;
 
 namespace Widely.API.Extensions
 {
@@ -16,9 +16,11 @@ namespace Widely.API.Extensions
     {
 
         private readonly RequestDelegate _next;
+        private readonly Logger _logger;
         public ExceptionMiddlewareExtensions(RequestDelegate next)
         {
             _next = next;
+            _logger = NLog.LogManager.GetCurrentClassLogger();
         }
 
         public async Task Invoke(HttpContext context)
@@ -48,7 +50,8 @@ namespace Widely.API.Extensions
                         break;
                 }
 
-                var result = JsonSerializer.Serialize(new { message = error?.Message });
+                _logger.Error($"Something went wrong: {response.StatusCode} {error}");
+                var result = JsonSerializer.Serialize(new { message = $"Something went wrong: {error?.Message}" });
                 await response.WriteAsync(result);
             }
         }

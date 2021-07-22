@@ -9,7 +9,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Widely.DataAccess", "Widely
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Widely.BusinessLogic", "Widely.BusinessLogic\Widely.BusinessLogic.csproj", "{CF1386B3-B61C-4453-9750-A17D84107ADA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Widely.DataModel", "Widely.DataModel\Widely.DataModel.csproj", "{B7437E2F-F5B2-4971-A5DF-2DF9EACD6C11}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Widely.DataModel", "Widely.DataModel\Widely.DataModel.csproj", "{B7437E2F-F5B2-4971-A5DF-2DF9EACD6C11}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Report", "Report", "{E73F993E-09E6-4E03-AAEF-6F5A6EF73961}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{0605E1BB-BB64-46FB-9076-5B5667B89128}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -49,6 +49,7 @@ namespace Widely.API.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login(LogInRequest request)
         {
+
             #region Logging
             _logger
                .WithProperty("username", request.Username)
@@ -56,7 +57,7 @@ namespace Widely.API.Controllers
                .WithProperty("status", "Request")
                .Debug("{user} is logging in.", request.Username);
             #endregion
-
+            
             var response = await this._authService.Login(request);
 
             if (!response.Success)
@@ -66,8 +67,9 @@ namespace Widely.API.Controllers
                     .WithProperty("username", request.Username)
                     .WithProperty("action", "LogIn")
                     .WithProperty("status", "Failure")
-                    .Debug("Logged in fail {user}", request.Username);
+                    .Debug("Logged in fail {user} : {msg}", request.Username, response.Message);
                 #endregion
+
 
                 return Unauthorized(response);
             }
@@ -77,7 +79,7 @@ namespace Widely.API.Controllers
                .WithProperty("username", request.Username)
                .WithProperty("action", "LogIn")
                .WithProperty("status", "Success")
-               .Debug("Logged in success {user}", request.Username);
+               .Debug("{msg}", response.Message);
             #endregion
 
             return Ok(response);
@@ -101,6 +103,8 @@ namespace Widely.API.Controllers
         [HttpPost("refreshtoken")]
         public async Task<IActionResult> RefreshToken(RefreshTokenRequest tokenRequest)
         {
+            throw new Exception("test exception");
+
             #region Logging
             _logger
                 .WithProperty("username", this._baseService.GetUserName())
@@ -138,7 +142,11 @@ namespace Widely.API.Controllers
             }
 
             #region Logging
-
+            _logger
+                .WithProperty("username", this._baseService.GetUserName())
+                .WithProperty("action", "RefreshToken")
+                .WithProperty("status", "Success")
+                .Debug("Success by token : {token}", response.Data.RefreshToken);
             #endregion
 
             return Ok(response);

@@ -4,7 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Widely.API.Infrastructure.Error
+namespace Widely.API.Infrastructure.Exceptions
 {
     public class AppException : Exception
     {
