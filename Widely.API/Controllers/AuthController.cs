@@ -67,7 +67,7 @@ namespace Widely.API.Controllers
                     .WithProperty("username", request.Username)
                     .WithProperty("action", "LogIn")
                     .WithProperty("status", "Failure")
-                    .Debug("Logged in fail {user} : {msg}", request.Username, response.Message);
+                    .Debug("{msg}", response.Message);
                 #endregion
 
 
@@ -103,8 +103,7 @@ namespace Widely.API.Controllers
         [HttpPost("refreshtoken")]
         public async Task<IActionResult> RefreshToken(RefreshTokenRequest tokenRequest)
         {
-            throw new Exception("test exception");
-
+            var getuser = _baseService.GetUserName();
             #region Logging
             _logger
                 .WithProperty("username", this._baseService.GetUserName())
