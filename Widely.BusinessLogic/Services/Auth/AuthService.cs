@@ -157,7 +157,8 @@ namespace Widely.BusinessLogic.Services.Auth
             response.Data.TokenExpire = tokenExpire;
             response.Data.TokenTimeoutMins = ((int)tokenExpire.Subtract(DateTime.Now).TotalMinutes) - 1;
 
-
+            response.Success = true;
+            response.Message = "Success.";
 
             await _unitOfWork.CommitAsync();
 

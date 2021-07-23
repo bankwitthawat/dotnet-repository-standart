@@ -12,6 +12,7 @@ using Widely.DataModel.ViewModels.Auth.Register;
 using Widely.BusinessLogic.Services.Base;
 using Microsoft.Extensions.Logging;
 using NLog;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Widely.API.Controllers
 {
@@ -100,6 +101,8 @@ namespace Widely.API.Controllers
         ///
         /// </remarks>
         /// <returns></returns>
+        /// 
+        [Authorize]
         [HttpPost("refreshtoken")]
         public async Task<IActionResult> RefreshToken(RefreshTokenRequest tokenRequest)
         {
@@ -122,7 +125,7 @@ namespace Widely.API.Controllers
                    .Debug("Token is required.");
                 #endregion
 
-                return Unauthorized(new { message = "Token is required" });
+                return Unauthorized(new { Message = "Token is required" });
             }
 
             var response = await this._authService.RefreshToken(tokenRequest.Token);
@@ -137,7 +140,7 @@ namespace Widely.API.Controllers
                    .Debug("failed by token : {token}", tokenRequest.Token);
                 #endregion
 
-                return Unauthorized(response);
+                return Unauthorized(response.Message);
             }
 
             #region Logging
