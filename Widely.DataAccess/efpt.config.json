@@ -14,11 +14,31 @@
    "SelectedToBeGenerated": 0,
    "Tables": [
       {
+         "Name": "appmodule",
+         "ObjectType": 0
+      },
+      {
+         "Name": "apppermission",
+         "ObjectType": 0
+      },
+      {
+         "Name": "approles",
+         "ObjectType": 0
+      },
+      {
          "Name": "appusers",
          "ObjectType": 0
       },
       {
          "Name": "authtokens",
+         "ObjectType": 0
+      },
+      {
+         "Name": "log_auth",
+         "ObjectType": 0
+      },
+      {
+         "Name": "log_exception",
          "ObjectType": 0
       }
    ],

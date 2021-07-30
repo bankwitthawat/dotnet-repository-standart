@@ -19,17 +19,103 @@ namespace Widely.DataAccess.DataContext
         {
         }
 
+        public virtual DbSet<Appmodule> Appmodule { get; set; }
+        public virtual DbSet<Apppermission> Apppermission { get; set; }
+        public virtual DbSet<Approles> Approles { get; set; }
         public virtual DbSet<Appusers> Appusers { get; set; }
         public virtual DbSet<Authtokens> Authtokens { get; set; }
+        public virtual DbSet<LogAuth> LogAuth { get; set; }
+        public virtual DbSet<LogException> LogException { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasCharSet("utf8")
                 .UseCollation("utf8_general_ci");
 
+            modelBuilder.Entity<Appmodule>(entity =>
+            {
+                entity.ToTable("appmodule");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.Icon).HasMaxLength(45);
+
+                entity.Property(e => e.ParentId).HasColumnName("ParentID");
+
+                entity.Property(e => e.Path).HasMaxLength(500);
+
+                entity.Property(e => e.Subtitle).HasMaxLength(500);
+
+                entity.Property(e => e.Title).HasMaxLength(250);
+
+                entity.Property(e => e.Type)
+                    .IsRequired()
+                    .HasMaxLength(20);
+            });
+
+            modelBuilder.Entity<Apppermission>(entity =>
+            {
+                entity.HasKey(e => new { e.Id, e.RoleId, e.ModuleId })
+                    .HasName("PRIMARY")
+                    .HasAnnotation("MySql:IndexPrefixLength", new[] { 0, 0, 0 });
+
+                entity.ToTable("apppermission");
+
+                entity.HasIndex(e => e.ModuleId, "FK_AppPermission_ModuleID_ID_idx");
+
+                entity.HasIndex(e => e.RoleId, "FK_AppPermission_RoleID_ID_idx");
+
+                entity.Property(e => e.Id)
+                    .ValueGeneratedOnAdd()
+                    .HasColumnName("ID");
+
+                entity.Property(e => e.RoleId).HasColumnName("RoleID");
+
+                entity.Property(e => e.ModuleId).HasColumnName("ModuleID");
+
+                entity.Property(e => e.ModifiedBy).HasMaxLength(50);
+
+                entity.Property(e => e.ModifiedDate).HasColumnType("datetime");
+
+                entity.HasOne(d => d.Module)
+                    .WithMany(p => p.Apppermission)
+                    .HasForeignKey(d => d.ModuleId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_AppPermission_ModuleID_ID");
+
+                entity.HasOne(d => d.Role)
+                    .WithMany(p => p.Apppermission)
+                    .HasForeignKey(d => d.RoleId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_AppPermission_RoleID_ID");
+            });
+
+            modelBuilder.Entity<Approles>(entity =>
+            {
+                entity.ToTable("approles");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.CreatedBy).HasMaxLength(50);
+
+                entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+
+                entity.Property(e => e.Description).HasMaxLength(45);
+
+                entity.Property(e => e.ModifiedBy).HasMaxLength(50);
+
+                entity.Property(e => e.ModifiedDate).HasColumnType("datetime");
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(45);
+            });
+
             modelBuilder.Entity<Appusers>(entity =>
             {
                 entity.ToTable("appusers");
+
+                entity.HasIndex(e => e.RoleId, "FK__idx");
 
                 entity.Property(e => e.Id).HasColumnName("ID");
 
@@ -87,6 +173,11 @@ namespace Widely.DataAccess.DataContext
                     .HasMaxLength(100)
                     .UseCollation("utf8mb4_0900_ai_ci")
                     .HasCharSet("utf8mb4");
+
+                entity.HasOne(d => d.Role)
+                    .WithMany(p => p.Appusers)
+                    .HasForeignKey(d => d.RoleId)
+                    .HasConstraintName("FK_RoleID_ID");
             });
 
             modelBuilder.Entity<Authtokens>(entity =>
@@ -120,6 +211,56 @@ namespace Widely.DataAccess.DataContext
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_UserID_ID");
+            });
+
+            modelBuilder.Entity<LogAuth>(entity =>
+            {
+                entity.ToTable("log_auth");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.Action)
+                    .IsRequired()
+                    .HasMaxLength(45);
+
+                entity.Property(e => e.Message).HasMaxLength(5000);
+
+                entity.Property(e => e.RequestIp).HasMaxLength(50);
+
+                entity.Property(e => e.Status).HasMaxLength(45);
+
+                entity.Property(e => e.TimeStamp).HasColumnType("datetime");
+
+                entity.Property(e => e.Username)
+                    .IsRequired()
+                    .HasMaxLength(100);
+            });
+
+            modelBuilder.Entity<LogException>(entity =>
+            {
+                entity.ToTable("log_exception");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.Exception).HasMaxLength(5000);
+
+                entity.Property(e => e.Level)
+                    .IsRequired()
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.Logger)
+                    .IsRequired()
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.Message)
+                    .IsRequired()
+                    .HasMaxLength(5000);
+
+                entity.Property(e => e.Stacktrace).HasMaxLength(5000);
+
+                entity.Property(e => e.TimeStamp).HasColumnType("datetime");
+
+                entity.Property(e => e.Username).HasMaxLength(100);
             });
 
             OnModelCreatingPartial(modelBuilder);

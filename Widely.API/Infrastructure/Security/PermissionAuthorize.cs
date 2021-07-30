@@ -10,20 +10,21 @@ using Widely.DataModel.ViewModels.Auth.LogIn;
 
 namespace Widely.API.Infrastructure.Security
 {
-    public class AuthorizeAttribute : TypeFilterAttribute
+    public class ModulePermission : TypeFilterAttribute
     {
-        public AuthorizeAttribute(string item, string action) : base(typeof(AuthorizeActionFilter))
+        public ModulePermission(string module, string permission) : base(typeof(ModulePermissionAuthorizeFilter))
         {
-            Arguments = new object[] { item, action };
+            Arguments = new object[] { module, permission };
         }
     }
 
-    public class AuthorizeActionFilter : IAuthorizationFilter
+    public class ModulePermissionAuthorizeFilter : IAuthorizationFilter
     {
         private readonly WidelystandartContext _context;
         private readonly string _appModule;
         private readonly string _action;
-        public AuthorizeActionFilter(string AppModule, string action, WidelystandartContext context)
+
+        public ModulePermissionAuthorizeFilter(string AppModule, string action, WidelystandartContext context)
         {
             _context = context;
             _appModule = AppModule;
@@ -39,7 +40,7 @@ namespace Widely.API.Infrastructure.Security
 
                 var currentRefreshToken = context.HttpContext.User.Claims.FirstOrDefault(x => x.Type == "refreshtoken").Value;
                 var dbRefreshToken = _context.Authtokens.FirstOrDefault(x => x.Token == currentRefreshToken);
-     
+
                 if (dbRefreshToken == null)
                 {
                     context.Result = new UnauthorizedResult(); //401
@@ -63,22 +64,5 @@ namespace Widely.API.Infrastructure.Security
                 context.Result = new UnauthorizedResult();
             }
         }
-
-        //private bool HasAuthorize(List<AppModule> appauthorize, string AppModuleCode)
-        //{
-        //    bool hasAuthorizeAccess = appauthorize.Any(x => x.Title == AppModuleCode);
-        //    if (!hasAuthorizeAccess) return false;
-        //    if (EditablePermission == true)
-        //    {
-        //        var appModule = appauthorize.FirstOrDefault(x => x.Title == AppModuleCode);
-        //        if (appModule.IsAccess == true) return true;
-        //        else return false;
-        //    }
-        //    else
-        //    {
-        //        return true;
-        //    }
-        //}
-
     }
 }

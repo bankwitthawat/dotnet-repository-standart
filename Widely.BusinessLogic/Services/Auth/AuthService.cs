@@ -24,6 +24,7 @@ namespace Widely.BusinessLogic.Services.Auth
         private readonly JwtManager _jwtManager;
         public readonly IAuthRepository _authRepository;
         private readonly IConfiguration _configuration;
+        public List<AppModule> treeNode = new List<AppModule>();
 
         public AuthService(
             IHttpContextAccessor httpContextAccessor
@@ -35,95 +36,242 @@ namespace Widely.BusinessLogic.Services.Auth
             ) : base(httpContextAccessor, unitOfWork)
         {
             var testHttpContext = httpContextAccessor;
+
             _configuration = configuration;
             _mapper = mapper;
             _jwtManager = jwtManager;
             _authRepository = authRepository;
+
         }
 
         public async Task<ServiceResponse<LogInResponse>> Login(LogInRequest request)
         {
             ServiceResponse<LogInResponse> response = new ServiceResponse<LogInResponse>();
-            Int32.TryParse(_configuration.GetSection("JwtSetting:ExpireMins").Value, out int tokenExpire);
-            try
+            var userRepository = _unitOfWork.AsyncRepository<Appusers>();
+            var authTokenRepository = _unitOfWork.AsyncRepository<Authtokens>();
+
+            //var user = await userRepository.GetAsync(_ => _.Username.ToLower() == request.Username.ToLower());
+            var user = await _authRepository.GetUserRelated(request.Username);
+
+            if (user == null)
             {
-                var userRepository = _unitOfWork.AsyncRepository<Appusers>();
-                var authTokenRepository = _unitOfWork.AsyncRepository<Authtokens>();
-
-                var user = await userRepository.GetAsync(_ => _.Username.ToLower() == request.Username.ToLower());
-
-                if (user == null)
-                {
-                    response.Success = false;
-                    response.Message = "User not found.";
-                }
-                else if (user.IsActive == false)
-                {
-                    response.Success = false;
-                    response.Message = "This account has been suspended, please contract adminstrator.";
-                }
-                else if (user.LoginAttemptCount >= 5)
-                {
-                    response.Success = false;
-                    response.Message = "This account has been locked, please contract adminstrator.";
-                }
-                else if (!PasswordHashUtility.VerifyPasswordHash(request.Username, request.Password, user.PasswordHash, user.PasswordSalt))
-                {
-                    response.Success = false;
-                    response.Message = "Wrong password.";
-
-                    user.LoginAttemptCount++;
-                    await userRepository.UpdateAsync(user);
-                }
-                else
-                {
-
-                    //remove old refresh token
-                    var oldRefreshToken = await authTokenRepository.ListAsync(_ => _.UserId == user.Id);
-                    await authTokenRepository.RemoveRangeAsync(oldRefreshToken);
-
-
-                    //save new refresh token
-                    var refreshToken = _mapper.Map<Authtokens>(_jwtManager.GenerateRefreshToken(GetIpAddress(), GetUserAgnet(), GetMachineName()));
-                    refreshToken.UserId = user.Id;
-                    await authTokenRepository.AddAsync(refreshToken);
-
-                    //update user
-                    user.LastLogin = DateTime.Now;
-                    user.LoginAttemptCount = 0;
-                    await userRepository.UpdateAsync(user);
-
-
-                    response.Data = this.GetLoginUserInfo(user);
-                    response.Data.RefreshToken = refreshToken.Token;
-                    response.Data.TokenExpire = DateTime.Now.AddMinutes(tokenExpire);
-                    response.Data.TokenTimeoutMins = ((int)response.Data.TokenExpire.Subtract(DateTime.Now).TotalMinutes) - 1;
-                    response.Success = true;
-                    response.Message = "Login success. !!";
-                }
-
-                //save all changes to db
-                await _unitOfWork.CommitAsync();
+                response.Success = false;
+                response.Message = "User not found.";
             }
-            catch (Exception ex)
+            else if (user.IsActive == false)
+            {
+                response.Success = false;
+                response.Message = "This account has been suspended, please contract adminstrator.";
+            }
+            else if (user.LoginAttemptCount >= 5)
+            {
+                response.Success = false;
+                response.Message = "This account has been locked, please contract adminstrator.";
+            }
+            else if (!PasswordHashUtility.VerifyPasswordHash(request.Username, request.Password, user.PasswordHash, user.PasswordSalt))
+            {
+                response.Success = false;
+                response.Message = "Wrong password.";
+
+                user.LoginAttemptCount++;
+                await userRepository.UpdateAsync(user);
+            }
+            else
             {
 
-                throw;
+                //update user
+                user.LastLogin = DateTime.Now;
+                user.LoginAttemptCount = 0;
+                await userRepository.UpdateAsync(user);
+
+
+                response.Data = await this.GetLoginUserInfo(user);
+                response.Success = true;
+                response.Message = "Login success. !!";
             }
+
+            //save all changes to db
+            await _unitOfWork.CommitAsync();
+
 
 
             return response;
         }
 
-        private LogInResponse GetLoginUserInfo(Appusers user)
+        private async Task<LogInResponse> GetLoginUserInfo(Appusers user)
         {
+            Int32.TryParse(_configuration.GetSection("JwtSetting:ExpireMins").Value, out int tokenExpire);
+            var authTokenRepository = _unitOfWork.AsyncRepository<Authtokens>();
+
+            //remove old refresh token
+            var oldRefreshToken = await authTokenRepository.ListAsync(_ => _.UserId == user.Id);
+            await authTokenRepository.RemoveRangeAsync(oldRefreshToken);
+
+            //save new refresh token
+            var refreshToken = _mapper.Map<Authtokens>(_jwtManager.GenerateRefreshToken(GetIpAddress(), GetUserAgnet(), GetMachineName()));
+            refreshToken.UserId = user.Id;
+            await authTokenRepository.AddAsync(refreshToken);
+
             var userdto = _mapper.Map<LogInResponse>(user);
-
-
-
+            userdto.AppModule = await GetModuleTreeList(null, userdto.RoleId.Value);
+            userdto.RefreshToken = refreshToken.Token;
+            userdto.TokenExpire = DateTime.Now.AddMinutes(tokenExpire);
+            userdto.TokenTimeoutMins = ((int)userdto.TokenExpire.Subtract(DateTime.Now).TotalMinutes) - 1;
             userdto.Token = _jwtManager.CreateToken(userdto);
             return userdto;
         }
+
+
+        public async Task<List<AppModule>> GetModuleTreeList(AppModule appModule, int roleId)
+        {
+            var rootNode = await _authRepository.GetModulePermissionByRole(roleId);
+
+            List<AppModule> mList = (from r in rootNode
+                                     where appModule == null ? r.ParentID == null : r.ParentID == appModule.ID
+                                     select new AppModule()
+                                     {
+                                         ID = r.ID,
+                                         Title = r.Title,
+                                         Subtitle = r.Subtitle,
+                                         Type = r.Type,
+                                         Icon = r.Icon,
+                                         Path = r.Path,
+                                         Sequence = r.Sequence,
+                                         ParentID = r.ParentID,
+
+                                         IsAccess = r.IsAccess,
+                                         IsCreate = r.IsCreate,
+                                         IsView = r.IsView,
+                                         IsEdit = r.IsEdit,
+                                         IsDelete = r.IsDelete,
+                                         IsActive = r.IsActive,
+
+                                     }).ToList();
+
+            foreach (var item in mList)
+            {
+                item.Children = await GetModuleTreeList(item, roleId);
+            }
+
+            return mList;
+        }
+
+        #region recursive old code
+
+        //public async Task<List<AppModule>> GetTreeList(int roleId)
+        //{
+        //    var appmoduleRepo = _unitOfWork.AsyncRepository<Appmodule>();
+        //    var approleRepo = _unitOfWork.AsyncRepository<Approles>();
+        //    var appermissionRepo = _unitOfWork.AsyncRepository<Apppermission>();
+
+
+        //    //var rootNode = await appmoduleRepo.ListAsync(_ => _.IsActive == true && _.ParentId == null);
+        //    var rootNode = await _authRepository.GetModulePermissionByRole(roleId);
+
+        //    List<AppModule> mList = (from r in rootNode
+        //                             where r.ParentID == null
+        //                             select new AppModule()
+        //                             {
+        //                                 ID = r.ID,
+        //                                 Title = r.Title,
+        //                                 Subtitle = r.Subtitle,
+        //                                 Type = r.Type,
+        //                                 Icon = r.Icon,
+        //                                 Path = r.Path,
+        //                                 Sequence = r.Sequence,
+        //                                 ParentID = r.ParentID,
+
+        //                                 IsAccess = r.IsAccess,
+        //                                 IsCreate = r.IsCreate,
+        //                                 IsView = r.IsView,
+        //                                 IsEdit = r.IsEdit,
+        //                                 IsDelete = r.IsDelete,
+        //                                 IsActive = r.IsActive,
+
+        //                             }).ToList();
+
+        //    foreach (var item in mList)
+        //    {
+        //        //Recursive
+        //        item.Children = await GetNodesList(item, roleId);
+        //    }
+
+        //    return mList;
+        //}
+
+        //public async Task<List<AppModule>> GetNodesList(AppModule appModule, int roleId)
+        //{
+        //    var appmoduleRepo = _unitOfWork.AsyncRepository<Appmodule>();
+
+        //    //var node = await appmoduleRepo.ListAsync(_ => _.IsActive == true && _.ParentId == appModule.ID);
+        //    var node = await _authRepository.GetModulePermissionByRole(roleId);
+
+        //    List<AppModule> mList = (from q in node
+        //                             where q.ParentID == appModule.ID
+        //                             select new AppModule()
+        //                             {
+        //                                 ID = q.ID,
+        //                                 Title = q.Title,
+        //                                 Subtitle = q.Subtitle,
+        //                                 Type = q.Type,
+        //                                 Icon = q.Icon,
+        //                                 Path = q.Path,
+        //                                 Sequence = q.Sequence,
+        //                                 ParentID = q.ParentID,
+
+        //                                 IsAccess = q.IsAccess,
+        //                                 IsCreate = q.IsCreate,
+        //                                 IsView = q.IsView,
+        //                                 IsEdit = q.IsEdit,
+        //                                 IsDelete = q.IsDelete,
+        //                                 IsActive = q.IsActive,
+
+        //                             }).ToList();
+
+        //    foreach (var item in mList)
+        //    {
+        //        //Recursive
+        //        item.Children = await GetNodesList(item, roleId);
+        //    }
+
+        //    return mList.OrderBy(x => x.Sequence).ToList();
+        //}
+
+
+        //private async void ModuleTree(AppModule parentNode)
+        //{
+        //    var appmoduleRepo = _unitOfWork.AsyncRepository<Appmodule>();
+        //    var allModule = await appmoduleRepo.ListAsync(_ => _.IsActive == true);
+
+        //    var rootNode = allModule.Where(x => parentNode == null ? x.ParentId == null : x.ParentId == parentNode.ID).ToList();
+
+        //    foreach (var item in rootNode)
+        //    {
+        //        AppModule newNode = new AppModule();
+        //        newNode.ID = item.Id;
+        //        newNode.Title = item.Title;
+        //        newNode.Subtitle = item.Subtitle;
+        //        newNode.Type = item.Type;
+        //        newNode.Icon = item.Icon;
+        //        newNode.Path = item.Path;
+        //        newNode.Sequence = item.Sequence;
+
+
+
+        //        if (parentNode == null)
+        //        {
+        //            treeNode.Add(newNode);
+        //        }
+        //        else
+        //        {
+        //            parentNode.Children.Add(newNode);
+        //        }
+
+        //        this.ModuleTree(newNode);
+
+        //    }
+        //}
+        #endregion
 
         public async Task<ServiceResponse<LogInResponse>> RefreshToken(string oldToken)
         {
@@ -152,7 +300,7 @@ namespace Widely.BusinessLogic.Services.Auth
             await authTokenRepository.RemoveAsync(refreshToken);
 
 
-            response.Data = this.GetLoginUserInfo(user);
+            response.Data = await this.GetLoginUserInfo(user);
             response.Data.RefreshToken = newRefreshToken.Token;
             response.Data.TokenExpire = tokenExpire;
             response.Data.TokenTimeoutMins = ((int)tokenExpire.Subtract(DateTime.Now).TotalMinutes) - 1;

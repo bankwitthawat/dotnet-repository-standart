@@ -13,6 +13,8 @@ using Widely.BusinessLogic.Services.Base;
 using Microsoft.Extensions.Logging;
 using NLog;
 using Microsoft.AspNetCore.Authorization;
+using Widely.API.Infrastructure.Security;
+using AuthorizeAttribute = Microsoft.AspNetCore.Authorization.AuthorizeAttribute;
 
 namespace Widely.API.Controllers
 {
@@ -71,7 +73,6 @@ namespace Widely.API.Controllers
                     .Debug("{msg}", response.Message);
                 #endregion
 
-
                 return Unauthorized(response);
             }
 
@@ -102,7 +103,9 @@ namespace Widely.API.Controllers
         /// </remarks>
         /// <returns></returns>
         /// 
+
         [Authorize]
+        [ModulePermission("USERS, ROLES", "EDIT")]
         [HttpPost("refreshtoken")]
         public async Task<IActionResult> RefreshToken(RefreshTokenRequest tokenRequest)
         {

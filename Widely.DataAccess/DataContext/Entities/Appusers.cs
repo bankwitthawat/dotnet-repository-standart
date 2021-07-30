@@ -34,6 +34,7 @@ namespace Widely.DataAccess.DataContext.Entities
         public string ModifiedBy { get; set; }
         public DateTime? ModifiedDate { get; set; }
 
+        public virtual Approles Role { get; set; }
         public virtual ICollection<Authtokens> Authtokens { get; set; }
     }
 }

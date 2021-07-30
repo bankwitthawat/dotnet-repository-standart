@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Widely.DataModel.ViewModels.Auth.LogIn;
 using Widely.DataModel.ViewModels.Auth.Token;
+using System.Text.Json;
 
 namespace Widely.BusinessLogic.Utilities
 {
@@ -24,11 +25,14 @@ namespace Widely.BusinessLogic.Utilities
         public string CreateToken(LogInResponse user)
         {
             Int32.TryParse(_configuration.GetSection("JwtSetting:ExpireMins").Value, out int tokenExpire);
+            var appauthorize = JsonSerializer.Serialize(user.AppModule);
 
             List<Claim> claims = new List<Claim> {
                 new Claim (ClaimTypes.NameIdentifier, user.UserId.ToString()),
                 new Claim (ClaimTypes.Name, user.Username),
                 new Claim (ClaimTypes.Role, user.RoleId?.ToString() ?? ""),
+                new Claim ("appauthorize", appauthorize),
+                new Claim ("refreshtoken", user.RefreshToken),
             };
 
             SymmetricSecurityKey key = new SymmetricSecurityKey(
