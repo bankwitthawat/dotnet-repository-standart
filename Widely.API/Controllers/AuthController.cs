@@ -88,6 +88,74 @@ namespace Widely.API.Controllers
         }
         #endregion
 
+        #region LogOut
+        /// <summary>
+        /// API endpoint to revoke token
+        /// </summary>
+        /// <remarks>
+        /// Sample request:
+        ///
+        ///     POST /Todo
+        ///     {
+        ///        "token": "xxxxxxxxxxxxxxxxxxxxxxx"
+        ///     }
+        ///
+        /// </remarks>
+        /// <returns></returns>
+        /// 
+        [Authorize]
+        [ModulePermission("*", "*")]
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout(RefreshTokenRequest tokenRequest)
+        {
+            #region Logging
+            _logger
+                .WithProperty("username", this._baseService.GetUserName())
+                .WithProperty("action", "Logout")
+                .WithProperty("status", "Request")
+                .Debug("request by token : {token}", tokenRequest.Token);
+            #endregion
+
+            if (string.IsNullOrEmpty(tokenRequest.Token))
+            {
+                #region Logging
+                _logger
+                   .WithProperty("username", this._baseService.GetUserName())
+                   .WithProperty("action", "Logout")
+                   .WithProperty("status", "Failure")
+                   .Debug("Token is required.");
+                #endregion
+
+                return Unauthorized(new { Message = "Token is required" });
+            }
+
+            var response = await _authService.Logout(tokenRequest.Token);
+
+            if (!response.Success)
+            {
+                #region Logging
+                _logger
+                   .WithProperty("username", this._baseService.GetUserName())
+                   .WithProperty("action", "Logout")
+                   .WithProperty("status", "Failure")
+                   .Debug("failed by token : {token}", tokenRequest.Token);
+                #endregion
+
+                return Unauthorized(new { message = "Token not found" });
+            }
+
+            #region Logging
+            _logger
+                .WithProperty("username", this._baseService.GetUserName())
+                .WithProperty("action", "Logout")
+                .WithProperty("status", "Success")
+                .Debug("Successfully !!");
+            #endregion
+
+            return Ok(response);
+        }
+        #endregion
+
         #region Refresh Token
         /// <summary>
         /// API endpoint to refresh token
@@ -103,13 +171,12 @@ namespace Widely.API.Controllers
         /// </remarks>
         /// <returns></returns>
         /// 
-
         [Authorize]
-        [ModulePermission("USERS, ROLES", "EDIT")]
+        [ModulePermission("*", "*")]
         [HttpPost("refreshtoken")]
         public async Task<IActionResult> RefreshToken(RefreshTokenRequest tokenRequest)
         {
-            var getuser = _baseService.GetUserName();
+            //var getuser = _baseService.GetUserName(); test
             #region Logging
             _logger
                 .WithProperty("username", this._baseService.GetUserName())
@@ -158,10 +225,11 @@ namespace Widely.API.Controllers
 
         }
         #endregion
+        
 
         #region Register
         /// <summary>
-        /// API endpoint to refresh token
+        /// API endpoint to register (development)
         /// </summary>
         /// <remarks>
         /// Sample request:

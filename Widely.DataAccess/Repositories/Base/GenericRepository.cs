@@ -33,14 +33,14 @@ namespace Widely.DataAccess.Repositories.Base
             return await _dbSet.ToListAsync();
         }
 
-        public Task<T> GetAsync(Expression<Func<T, bool>> expression)
+        public async Task<T> GetAsync(Expression<Func<T, bool>> expression)
         {
-            return _dbSet.FirstOrDefaultAsync(expression);
+            return await _dbSet.FirstOrDefaultAsync(expression);
         }
 
-        public Task<List<T>> ListAsync(Expression<Func<T, bool>> expression)
+        public async Task<List<T>> ListAsync(Expression<Func<T, bool>> expression)
         {
-            return _dbSet.Where(expression).ToListAsync();
+            return await _dbSet.Where(expression).ToListAsync();
         }
 
         public Task<bool> RemoveAsync(T entity)

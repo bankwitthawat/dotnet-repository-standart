@@ -24,6 +24,8 @@ namespace Widely.API.Infrastructure.Security
         private readonly string _appModule;
         private readonly string _action;
 
+        private bool hasPermission = false;
+
         public ModulePermissionAuthorizeFilter(string AppModule, string action, WidelystandartContext context)
         {
             _context = context;
@@ -50,19 +52,53 @@ namespace Widely.API.Infrastructure.Security
                 var appauthorize = JsonSerializer.Deserialize<List<AppModule>>(context.HttpContext.User.Claims
                     .FirstOrDefault(x => x.Type == "appauthorize").Value);
 
-
-                //bool isAuthorized = HasAuthorize(appauthorize, _AppModule);
-                bool isAuthorized = true;
+                bool isAuthorized = HasAuthorize(appauthorize, moduleArr, _action);
 
                 if (!isAuthorized)
                 {
-                    context.Result = new ForbidResult(); //403
+                    context.Result = new ForbidResult("Access Denied."); //403
                 }
             }
             catch
             {
                 context.Result = new UnauthorizedResult();
             }
+        }
+
+        private bool HasAuthorize(List<AppModule> appModules, string[] appModuleName, string permission)
+        {
+            if (this.hasPermission || permission == "*")
+            {
+                return true;
+            }
+
+            foreach (var item in appModules)
+            {
+                bool hasAccess = appModuleName.Any(x => x == item.Title) && item.IsAccess == true;
+
+                if (hasAccess)
+                {
+                    this.hasPermission = permission.ToUpper() switch
+                    {
+                        "CREATE" when item.IsCreate == true => true,
+                        "EDIT" when item.IsEdit == true => true,
+                        "VIEW" when item.IsView == true => true,
+                        "DELETE" when item.IsDelete == true => true,
+                        _ => false
+                    };
+
+                    if (this.hasPermission)
+                        return this.hasPermission;
+
+                }
+
+                if (item.Children != null)
+                {
+                    HasAuthorize(item.Children, appModuleName, permission);
+                }
+            }
+
+            return this.hasPermission;
         }
     }
 }

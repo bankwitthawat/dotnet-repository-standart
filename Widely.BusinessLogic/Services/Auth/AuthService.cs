@@ -48,7 +48,6 @@ namespace Widely.BusinessLogic.Services.Auth
         {
             ServiceResponse<LogInResponse> response = new ServiceResponse<LogInResponse>();
             var userRepository = _unitOfWork.AsyncRepository<Appusers>();
-            var authTokenRepository = _unitOfWork.AsyncRepository<Authtokens>();
 
             //var user = await userRepository.GetAsync(_ => _.Username.ToLower() == request.Username.ToLower());
             var user = await _authRepository.GetUserRelated(request.Username);
@@ -87,7 +86,7 @@ namespace Widely.BusinessLogic.Services.Auth
 
                 response.Data = await this.GetLoginUserInfo(user);
                 response.Success = true;
-                response.Message = "Login success. !!";
+                response.Message = "Successfully. !!";
             }
 
             //save all changes to db
@@ -306,7 +305,7 @@ namespace Widely.BusinessLogic.Services.Auth
             response.Data.TokenTimeoutMins = ((int)tokenExpire.Subtract(DateTime.Now).TotalMinutes) - 1;
 
             response.Success = true;
-            response.Message = "Success.";
+            response.Message = "Successfully. !!";
 
             await _unitOfWork.CommitAsync();
 
@@ -358,5 +357,27 @@ namespace Widely.BusinessLogic.Services.Auth
 
             return response;
         }
+   
+        public async Task<ServiceResponse<bool>> Logout(string oldtoken)
+        {
+            ServiceResponse<bool> response = new ServiceResponse<bool>() { Success = false, Data = false };
+            var authTokenRepository = _unitOfWork.AsyncRepository<Authtokens>();
+
+            var token = await authTokenRepository.GetAsync(_ => _.Token == oldtoken);
+            if (token == null)
+            {
+                return response;
+            }
+
+            await authTokenRepository.RemoveAsync(token);
+            await _unitOfWork.CommitAsync();
+
+            response.Data = true;
+            response.Success = true;
+            response.Message = "Successfully. !!";
+
+            return response;
+        }
+
     }
 }
