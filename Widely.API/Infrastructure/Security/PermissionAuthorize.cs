@@ -38,8 +38,6 @@ namespace Widely.API.Infrastructure.Security
             try
             {
                 var moduleArr = Array.ConvertAll(_appModule.Split(','), p => p.Trim());
-
-
                 var currentRefreshToken = context.HttpContext.User.Claims.FirstOrDefault(x => x.Type == "refreshtoken").Value;
                 var dbRefreshToken = _context.Authtokens.FirstOrDefault(x => x.Token == currentRefreshToken);
 
@@ -52,7 +50,8 @@ namespace Widely.API.Infrastructure.Security
                 var appauthorize = JsonSerializer.Deserialize<List<AppModule>>(context.HttpContext.User.Claims
                     .FirstOrDefault(x => x.Type == "appauthorize").Value);
 
-                bool isAuthorized = HasAuthorize(appauthorize, moduleArr, _action);
+                this.HasAuthorize(appauthorize, moduleArr, _action);
+                bool isAuthorized = this.hasPermission;
 
                 if (!isAuthorized)
                 {
@@ -65,11 +64,11 @@ namespace Widely.API.Infrastructure.Security
             }
         }
 
-        private bool HasAuthorize(List<AppModule> appModules, string[] appModuleName, string permission)
+        private void HasAuthorize(List<AppModule> appModules, string[] appModuleName, string permission)
         {
             if (this.hasPermission || permission == "*")
             {
-                return true;
+                return;
             }
 
             foreach (var item in appModules)
@@ -88,7 +87,7 @@ namespace Widely.API.Infrastructure.Security
                     };
 
                     if (this.hasPermission)
-                        return this.hasPermission;
+                        return;
 
                 }
 
@@ -98,7 +97,7 @@ namespace Widely.API.Infrastructure.Security
                 }
             }
 
-            return this.hasPermission;
+            return;
         }
     }
 }

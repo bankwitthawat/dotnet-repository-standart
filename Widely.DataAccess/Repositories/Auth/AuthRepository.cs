@@ -53,6 +53,7 @@ namespace Widely.DataAccess.Repositories.Auth
         {
             var user = await _context.Appusers
                        .Include(i => i.Authtokens)
+                       .Include(i => i.Role)
                        .SingleOrDefaultAsync(_ => _.Authtokens.Any(t => t.Token == token));
 
             if (user == null)

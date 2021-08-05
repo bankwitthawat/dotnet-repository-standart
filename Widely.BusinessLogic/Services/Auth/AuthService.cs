@@ -83,7 +83,6 @@ namespace Widely.BusinessLogic.Services.Auth
                 user.LoginAttemptCount = 0;
                 await userRepository.UpdateAsync(user);
 
-
                 response.Data = await this.GetLoginUserInfo(user);
                 response.Success = true;
                 response.Message = "Successfully. !!";
@@ -91,8 +90,6 @@ namespace Widely.BusinessLogic.Services.Auth
 
             //save all changes to db
             await _unitOfWork.CommitAsync();
-
-
 
             return response;
         }
@@ -280,13 +277,13 @@ namespace Widely.BusinessLogic.Services.Auth
 
             var username = GetUserID();
             if (string.IsNullOrEmpty(username))
-                return response;
+                return response; 
 
             var userRepository = _unitOfWork.AsyncRepository<Appusers>();
             var authTokenRepository = _unitOfWork.AsyncRepository<Authtokens>();
 
             var user = await _authRepository.GetUserRelatedByToken(oldToken);
-            if (user == null)
+            if (user == null) 
                 return response;
 
             var refreshToken = user.Authtokens.Single(x => x.Token == oldToken);
