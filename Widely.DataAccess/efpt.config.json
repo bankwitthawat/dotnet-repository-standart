@@ -34,6 +34,22 @@
          "ObjectType": 0
       },
       {
+         "Name": "homework_customer",
+         "ObjectType": 0
+      },
+      {
+         "Name": "homework_customer_type",
+         "ObjectType": 0
+      },
+      {
+         "Name": "homework_product",
+         "ObjectType": 0
+      },
+      {
+         "Name": "homework_product_customer",
+         "ObjectType": 0
+      },
+      {
          "Name": "log_auth",
          "ObjectType": 0
       },

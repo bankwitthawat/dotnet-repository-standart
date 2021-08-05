@@ -24,6 +24,10 @@ namespace Widely.DataAccess.DataContext
         public virtual DbSet<Approles> Approles { get; set; }
         public virtual DbSet<Appusers> Appusers { get; set; }
         public virtual DbSet<Authtokens> Authtokens { get; set; }
+        public virtual DbSet<HomeworkCustomer> HomeworkCustomer { get; set; }
+        public virtual DbSet<HomeworkCustomerType> HomeworkCustomerType { get; set; }
+        public virtual DbSet<HomeworkProduct> HomeworkProduct { get; set; }
+        public virtual DbSet<HomeworkProductCustomer> HomeworkProductCustomer { get; set; }
         public virtual DbSet<LogAuth> LogAuth { get; set; }
         public virtual DbSet<LogException> LogException { get; set; }
 
@@ -211,6 +215,72 @@ namespace Widely.DataAccess.DataContext
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_UserID_ID");
+            });
+
+            modelBuilder.Entity<HomeworkCustomer>(entity =>
+            {
+                entity.ToTable("homework_customer");
+
+                entity.HasIndex(e => e.Type, "FK_Type_ID_idx");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.Name).HasMaxLength(45);
+
+                entity.HasOne(d => d.TypeNavigation)
+                    .WithMany(p => p.HomeworkCustomer)
+                    .HasForeignKey(d => d.Type)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Type_ID");
+            });
+
+            modelBuilder.Entity<HomeworkCustomerType>(entity =>
+            {
+                entity.ToTable("homework_customer_type");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.Description).HasMaxLength(45);
+            });
+
+            modelBuilder.Entity<HomeworkProduct>(entity =>
+            {
+                entity.ToTable("homework_product");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.Name).HasMaxLength(45);
+
+                entity.Property(e => e.Qty).HasPrecision(18, 2);
+            });
+
+            modelBuilder.Entity<HomeworkProductCustomer>(entity =>
+            {
+                entity.ToTable("homework_product_customer");
+
+                entity.HasIndex(e => e.CustomerTypeId, "FK_CustomerTypeID_ID_idx");
+
+                entity.HasIndex(e => e.ProductId, "FK_ProducID_ID_idx");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.CustomerTypeId).HasColumnName("CustomerTypeID");
+
+                entity.Property(e => e.Price).HasPrecision(18, 2);
+
+                entity.Property(e => e.ProductId).HasColumnName("ProductID");
+
+                entity.HasOne(d => d.CustomerType)
+                    .WithMany(p => p.HomeworkProductCustomer)
+                    .HasForeignKey(d => d.CustomerTypeId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_CustomerTypeID_ID");
+
+                entity.HasOne(d => d.Product)
+                    .WithMany(p => p.HomeworkProductCustomer)
+                    .HasForeignKey(d => d.ProductId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ProducID_ID");
             });
 
             modelBuilder.Entity<LogAuth>(entity =>

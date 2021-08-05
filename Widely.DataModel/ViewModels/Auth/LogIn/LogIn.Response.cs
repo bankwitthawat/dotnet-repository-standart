@@ -42,10 +42,6 @@ namespace Widely.DataModel.ViewModels.Auth.LogIn
         public bool? IsView { get; set; }
         public bool? IsDelete { get; set; }
         public List<AppModule> Children { get; set; }
-        
-        //public void Addchildren(AppModule node)
-        //{
-        //    this.Children.Add(node);
-        //}
+    
     }
 }

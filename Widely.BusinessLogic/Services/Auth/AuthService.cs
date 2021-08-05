@@ -23,6 +23,7 @@ namespace Widely.BusinessLogic.Services.Auth
         private readonly IMapper _mapper;
         private readonly JwtManager _jwtManager;
         public readonly IAuthRepository _authRepository;
+
         private readonly IConfiguration _configuration;
         public List<AppModule> treeNode = new List<AppModule>();
 
