@@ -250,8 +250,6 @@ namespace Widely.DataAccess.DataContext
                 entity.Property(e => e.Id).HasColumnName("ID");
 
                 entity.Property(e => e.Name).HasMaxLength(45);
-
-                entity.Property(e => e.Qty).HasPrecision(18, 2);
             });
 
             modelBuilder.Entity<HomeworkProductCustomer>(entity =>

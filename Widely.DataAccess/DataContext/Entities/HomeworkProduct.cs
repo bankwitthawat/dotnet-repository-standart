@@ -15,7 +15,7 @@ namespace Widely.DataAccess.DataContext.Entities
 
         public int Id { get; set; }
         public string Name { get; set; }
-        public decimal? Qty { get; set; }
+        public int? Qty { get; set; }
 
         public virtual ICollection<HomeworkProductCustomer> HomeworkProductCustomer { get; set; }
     }
