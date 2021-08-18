@@ -41,6 +41,7 @@ namespace Widely.DataModel.ViewModels.Common
         public Pagination pagination { get; set; }
     }
 
+
     public class Pagination
     {
         public int pageSize { get; set; }
@@ -49,6 +50,12 @@ namespace Widely.DataModel.ViewModels.Common
         public int totalPage { get; set; }
         public string sortby { get; set; }
         public string sortdir { get; set; }
+    }
+
+    public class GridTreeResult<T>
+    {
+        public T data { get; set; }
+        public IEnumerable<T> children { get; set; }
     }
 
     public static class OrderExpression

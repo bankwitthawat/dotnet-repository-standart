@@ -111,6 +111,7 @@ namespace Widely.BusinessLogic.Services
         {
             int.TryParse(roleId, out int id);
             var rootNode = new List<AppModule>();
+
             if (id > 0)
             {
                 rootNode = await _approlesRepository.GetModulePermissionByRole(id);
