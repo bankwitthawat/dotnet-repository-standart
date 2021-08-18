@@ -7,10 +7,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Widely.API.Infrastructure.AutoMapper;
+using Widely.BusinessLogic.Services;
 using Widely.BusinessLogic.Services.Auth;
 using Widely.BusinessLogic.Services.Base;
 using Widely.BusinessLogic.Utilities;
 using Widely.DataAccess.DataContext;
+using Widely.DataAccess.Repositories.Approles;
 using Widely.DataAccess.Repositories.Appusers;
 using Widely.DataAccess.Repositories.Auth;
 using Widely.DataAccess.Repositories.Base;
@@ -26,6 +28,7 @@ namespace Widely.API.Extensions
                 .AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>))
                 .AddScoped<IAuthRepository, AuthRepository>()
                 .AddScoped<IAppusersRepository, AppusersRepository>()
+                .AddScoped<IApprolesRepository, ApprolesRepository>()
                 //add new repository here.
                 ;
         }
@@ -51,6 +54,7 @@ namespace Widely.API.Extensions
                 .AddScoped<JwtManager>()
                 .AddScoped<BaseService>()
                 .AddScoped<AuthService>()
+                .AddScoped<ApprolesService>()
                 // add new service here.
                 ;
         }

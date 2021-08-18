@@ -66,19 +66,20 @@ namespace Widely.API.Infrastructure.Security
 
         private void HasAuthorize(List<AppModule> appModules, string[] appModuleName, string permission)
         {
-            if (this.hasPermission || permission == "*")
+            if (this.hasPermission)
             {
                 return;
             }
 
             foreach (var item in appModules)
             {
-                bool hasAccess = appModuleName.Any(x => x == item.Title) && item.IsAccess == true;
+                bool hasAccess = appModuleName.Any(x => x.ToUpper() == item.Title.ToUpper()) && item.IsAccess == true;
 
                 if (hasAccess)
                 {
                     this.hasPermission = permission.ToUpper() switch
                     {
+                        "*" => true,
                         "CREATE" when item.IsCreate == true => true,
                         "EDIT" when item.IsEdit == true => true,
                         "VIEW" when item.IsView == true => true,

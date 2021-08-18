@@ -39,27 +39,27 @@ namespace Widely.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddCors();
-            services.AddMvc();
-
-            services.Configure<ForwardedHeadersOptions>(options =>
-            {
-                options.ForwardedHeaders =
-                    ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
-            });
-
+            services.AddMvcCore();
             services
-                .AddControllers()
-                .AddJsonOptions(options =>
-                {
+               .AddControllers()
+               .AddJsonOptions(options =>
+               {
                     //for PascalCase
                     //options.JsonSerializerOptions.PropertyNamingPolicy = null;
 
                     //for CamelCase
                     options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
 
-                
-                });
+
+               });
+
+            services.AddCors();
+
+            services.Configure<ForwardedHeadersOptions>(options =>
+            {
+                options.ForwardedHeaders =
+                    ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+            });
 
             //add jwt validation
             services.AddJwtAuthentication(Configuration);
@@ -91,24 +91,28 @@ namespace Widely.API
                 app.UseConfiguredSwaggerUI();
             }
 
+
             // global error handler
             app.UseMiddleware<ExceptionMiddlewareExtensions>();
+
+            // global jwt handler
+            //app.UseMiddleware<JwtMiddlewareExtension>();
 
             app.UseHttpsRedirection();
 
             app.UseRouting();
 
-            app.UseAuthentication();
+            app.UseCors(x => x
+             .SetIsOriginAllowed(origin => true)
+             .AllowAnyMethod()
+             .AllowAnyHeader()
+             .AllowCredentials());
 
             app.UseAuthorization();
 
             app.UseStatusCodePages();
 
-            app.UseCors(x => x
-              .SetIsOriginAllowed(origin => true)
-              .AllowAnyMethod()
-              .AllowAnyHeader()
-              .AllowCredentials());
+            app.UseAuthentication();
 
 
             app.UseEndpoints(endpoints =>

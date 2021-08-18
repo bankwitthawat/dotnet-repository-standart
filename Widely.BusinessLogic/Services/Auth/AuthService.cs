@@ -291,20 +291,13 @@ namespace Widely.BusinessLogic.Services.Auth
             if (refreshToken == null)
                 return response;
 
-            var newRefreshToken = _mapper.Map<Authtokens>(_jwtManager.GenerateRefreshToken(GetIpAddress(), GetUserAgnet(), GetMachineName()));
-            user.Authtokens.Add(newRefreshToken);
-            await userRepository.UpdateAsync(user);
             await authTokenRepository.RemoveAsync(refreshToken);
 
-
             response.Data = await this.GetLoginUserInfo(user);
-            response.Data.RefreshToken = newRefreshToken.Token;
-            response.Data.TokenExpire = tokenExpire;
-            response.Data.TokenTimeoutMins = ((int)tokenExpire.Subtract(DateTime.Now).TotalMinutes) - 1;
-
             response.Success = true;
             response.Message = "Successfully. !!";
 
+           
             await _unitOfWork.CommitAsync();
 
             return response;

@@ -21,14 +21,14 @@ namespace Widely.API.Extensions
             })
             .AddJwtBearer(options =>
             {
-                options.SaveToken = true;
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = true,
-                    ValidIssuer = configuration.GetSection("JwtSetting:Issuer").Value,
                     ValidateAudience = true,
-                    ValidAudience = configuration.GetSection("JwtSetting:Audience").Value,
                     ValidateIssuerSigningKey = true,
+
+                    ValidIssuer = configuration.GetSection("JwtSetting:Issuer").Value,
+                    ValidAudience = configuration.GetSection("JwtSetting:Audience").Value,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration.GetSection("JwtSetting:AccessSecret").Value)),
 
                     // set clockskew to zero so tokens expire exactly at token expiration time (instead of 5 minutes later)

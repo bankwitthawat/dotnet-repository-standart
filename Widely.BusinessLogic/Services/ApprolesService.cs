@@ -1,0 +1,153 @@
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Widely.BusinessLogic.Services.Base;
+using Widely.DataAccess.DataContext.Entities;
+using Widely.DataAccess.Repositories.Approles;
+using Widely.DataAccess.Repositories.UnitOfWork;
+using Widely.DataModel.ViewModels.Approles.ListView;
+using Widely.DataModel.ViewModels.Auth.LogIn;
+using Widely.DataModel.ViewModels.Common;
+
+namespace Widely.BusinessLogic.Services
+{
+    public class ApprolesService : BaseService
+    {
+        private readonly IMapper _mapper;
+        private readonly IApprolesRepository _approlesRepository;
+        public ApprolesService(
+            IHttpContextAccessor httpContextAccessor
+            , IUnitOfWork unitOfWork
+            , IMapper mapper
+            , IApprolesRepository approlesRepository
+            ) : base (httpContextAccessor, unitOfWork)
+        {
+            _mapper = mapper;
+            _approlesRepository = approlesRepository;
+        }
+
+        public async Task<GridResult<AppRoleResponse>> GetList(SearchCriteria<AppRoleRequest> filter)
+        {
+            var roleRepository = _unitOfWork.AsyncRepository<Approles>();
+            var filterData = await roleRepository.All();
+
+            //TODO
+            //#1 filterData by search criteria
+            //#2 set pagination
+
+            //#1
+            if (!string.IsNullOrEmpty(filter?.criteria?.name))
+            {
+                filterData = filterData.Where(x => x.Name.Contains(filter.criteria.name)).ToList();
+            }
+
+            if (!string.IsNullOrEmpty(filter?.criteria?.description))
+            {
+                filterData = filterData.Where(x => x.Description.Contains(filter.criteria.description)).ToList();
+            }
+
+            //#2
+            var TotalRecord = filterData == null ? 0 : filterData.Count();
+            filter.gridCriteria = filter.gridCriteria == null ? new GridCriteria { page = 1, pageSize = 10 } : filter.gridCriteria;
+            var TotalPage = (TotalRecord + filter.gridCriteria.pageSize - 1) / filter.gridCriteria.pageSize;
+            if (filter.gridCriteria != null && filter.gridCriteria.Take > 0)
+            {
+                filter.gridCriteria.totalRecord = TotalRecord;
+                filter.gridCriteria.totalPage = (TotalRecord + filter.gridCriteria.pageSize - 1) / filter.gridCriteria.pageSize;
+                if (!string.IsNullOrEmpty(filter.gridCriteria.sortby) && (!string.IsNullOrEmpty(filter.gridCriteria.sortdir)))
+                {
+                    if (filter.gridCriteria.sortdir == "desc")
+                        filterData = filterData.OrderByDescending(filter.gridCriteria.sortby).ToList();
+                    else
+                        filterData = filterData.OrderBy(filter.gridCriteria.sortby).ToList();
+                }
+                else
+                {
+                    filterData = filterData.OrderBy(x => x.Id).ToList(); //dufault initial load
+                }
+                filterData = filterData.Skip(filter.gridCriteria.skip).Take(filter.gridCriteria.Take).ToList();
+            }
+
+            var dtoResult = _mapper.Map<List<AppRoleResponse>>(filterData);
+
+            return new GridResult<AppRoleResponse>() 
+            {
+                Items = dtoResult,
+                pagination = new Pagination
+                {
+                    page = filter.gridCriteria.page,
+                    pageSize = filter.gridCriteria.pageSize,
+                    totalPage = TotalPage,
+                    totalRecord = TotalRecord,
+                    sortby = filter.gridCriteria.sortby,
+                    sortdir = filter.gridCriteria.sortdir,
+                }
+            };
+        }
+
+        public async Task<ServiceResponse<List<AppModule>>> GetModuleList(string roleId)
+        {
+            ServiceResponse<List<AppModule>> response = new ServiceResponse<List<AppModule>>();
+
+            try
+            {
+                response.Data = await this.GetModuleTreeList(null, roleId);
+                response.Success = true;
+                response.Message = "Ok";
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+            
+            return response;
+        }
+
+        private async Task<List<AppModule>> GetModuleTreeList(AppModule appModule, string roleId)
+        {
+            int.TryParse(roleId, out int id);
+            var rootNode = new List<AppModule>();
+            if (id > 0)
+            {
+                rootNode = await _approlesRepository.GetModulePermissionByRole(id);
+            }
+            else
+            {
+                rootNode = await _approlesRepository.GetModulePermission();
+            }
+
+            List<AppModule> mList = (from r in rootNode
+                                     where appModule == null ? r.ParentID == null : r.ParentID == appModule.ID
+                                     select new AppModule()
+                                     {
+                                         ID = r.ID,
+                                         Title = r.Title,
+                                         Subtitle = r.Subtitle,
+                                         Type = r.Type,
+                                         Icon = r.Icon,
+                                         Path = r.Path,
+                                         Sequence = r.Sequence,
+                                         ParentID = r.ParentID,
+
+                                         IsAccess = r.IsAccess,
+                                         IsCreate = r.IsCreate,
+                                         IsView = r.IsView,
+                                         IsEdit = r.IsEdit,
+                                         IsDelete = r.IsDelete,
+                                         IsActive = r.IsActive,
+
+                                     }).ToList();
+
+            foreach (var item in mList)
+            {
+                item.Children = await GetModuleTreeList(item, roleId);
+            }
+
+            return mList;
+        }
+    }
+}

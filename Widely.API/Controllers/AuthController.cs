@@ -12,9 +12,9 @@ using Widely.DataModel.ViewModels.Auth.Register;
 using Widely.BusinessLogic.Services.Base;
 using Microsoft.Extensions.Logging;
 using NLog;
-using Microsoft.AspNetCore.Authorization;
 using Widely.API.Infrastructure.Security;
-using AuthorizeAttribute = Microsoft.AspNetCore.Authorization.AuthorizeAttribute;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace Widely.API.Controllers
 {
@@ -103,7 +103,7 @@ namespace Widely.API.Controllers
         /// </remarks>
         /// <returns></returns>
         /// 
-        [Authorize]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [ModulePermission("*", "*")]
         [HttpPost("logout")]
         public async Task<IActionResult> Logout(RefreshTokenRequest tokenRequest)
@@ -171,7 +171,7 @@ namespace Widely.API.Controllers
         /// </remarks>
         /// <returns></returns>
         /// 
-        [Authorize]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [ModulePermission("*", "*")]
         [HttpPost("refreshtoken")]
         public async Task<IActionResult> RefreshToken(RefreshTokenRequest tokenRequest)

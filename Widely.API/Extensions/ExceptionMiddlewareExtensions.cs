@@ -9,6 +9,7 @@ using System.Net;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Widely.API.Infrastructure.Exceptions;
+using Widely.DataModel.ViewModels.Common;
 
 namespace Widely.API.Extensions
 {
@@ -36,6 +37,9 @@ namespace Widely.API.Extensions
 
                 switch (error)
                 {
+                    case UnauthorizeException e:
+                        response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                        break;
                     case AppException e:
                         // custom application error
                         response.StatusCode = (int)HttpStatusCode.BadRequest;
@@ -51,7 +55,13 @@ namespace Widely.API.Extensions
                 }
 
                 _logger.Error($"Something went wrong: {response.StatusCode} {error}");
-                var result = JsonSerializer.Serialize(new { message = $"Something went wrong: {error?.Message}" });
+                var result = JsonSerializer.Serialize(
+                    new ServiceResponse<string>
+                    {
+                        Data = null,
+                        Success = false,
+                        Message = $"Something went wrong: {error?.Message}"
+                    });
                 await response.WriteAsync(result);
             }
         }
