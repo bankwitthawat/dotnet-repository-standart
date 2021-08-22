@@ -15,5 +15,8 @@ namespace Widely.DataAccess.Repositories.Auth
         Task<List<AppModule>> GetModulePermissionByRole(int id);
 
         Task<Widely.DataAccess.DataContext.Entities.Appusers> GetUserRelated(string username);
+
+        Task<List<int>> FindAncestorById(int moduleId);
+
     }
 }

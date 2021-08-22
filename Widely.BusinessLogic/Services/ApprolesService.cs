@@ -9,6 +9,7 @@ using Widely.BusinessLogic.Services.Base;
 using Widely.DataAccess.DataContext.Entities;
 using Widely.DataAccess.Repositories.Approles;
 using Widely.DataAccess.Repositories.UnitOfWork;
+using Widely.DataModel.ViewModels.Approles.ItemView;
 using Widely.DataModel.ViewModels.Approles.ListView;
 using Widely.DataModel.ViewModels.Auth.LogIn;
 using Widely.DataModel.ViewModels.Common;
@@ -95,7 +96,19 @@ namespace Widely.BusinessLogic.Services
 
             try
             {
-                response.Data = await this.GetModuleTreeList(null, roleId);
+                int.TryParse(roleId, out int id);
+                var rootNode = new List<AppModule>();
+
+                if (id > 0)
+                {
+                    rootNode = await _approlesRepository.GetModulePermissionByRole(id);
+                }
+                else
+                {
+                    rootNode = await _approlesRepository.GetModulePermission();
+                }
+
+                response.Data = await this.GetModuleTreeList(null, roleId, rootNode);
                 response.Success = true;
                 response.Message = "Ok";
             }
@@ -107,19 +120,8 @@ namespace Widely.BusinessLogic.Services
             return response;
         }
 
-        private async Task<List<AppModule>> GetModuleTreeList(AppModule appModule, string roleId)
+        private async Task<List<AppModule>> GetModuleTreeList(AppModule appModule, string roleId, List<AppModule> rootNode)
         {
-            int.TryParse(roleId, out int id);
-            var rootNode = new List<AppModule>();
-
-            if (id > 0)
-            {
-                rootNode = await _approlesRepository.GetModulePermissionByRole(id);
-            }
-            else
-            {
-                rootNode = await _approlesRepository.GetModulePermission();
-            }
 
             List<AppModule> mList = (from r in rootNode
                                      where appModule == null ? r.ParentID == null : r.ParentID == appModule.ID
@@ -145,10 +147,52 @@ namespace Widely.BusinessLogic.Services
 
             foreach (var item in mList)
             {
-                item.Children = await GetModuleTreeList(item, roleId);
+                item.Children = await GetModuleTreeList(item, roleId, rootNode);
             }
 
             return mList;
         }
+    
+        public async Task<ServiceResponse<bool>> Create(AppRoleItemViewRequest request)
+        {
+            var transactionDate = DateTime.Now;
+            ServiceResponse<bool> response = new ServiceResponse<bool>();
+
+            var roleRepository = _unitOfWork.AsyncRepository<Approles>();
+            var permissionRepository = _unitOfWork.AsyncRepository<Apppermission>();
+
+            var newRole = new Approles()
+            {
+                Name = request.name,
+                Description = request.description,
+                CreatedBy = GetUserName(),
+                CreatedDate = transactionDate,
+            };
+
+            newRole.Apppermission = (from q in request.moduleList
+                                     select new Apppermission
+                                     {
+                                         RoleId = newRole.Id,
+                                         ModuleId = q.id,
+                                         IsAccess = q.isAccess,
+                                         IsCreate = q.isCreate,
+                                         IsEdit = q.isEdit,
+                                         IsView = q.isView,
+                                         IsDelete = q.isDelete,
+                                         ModifiedBy = GetUserName(),
+                                         ModifiedDate = transactionDate
+                                     }).ToList();
+
+            await roleRepository.AddAsync(newRole);
+            await _unitOfWork.CommitAsync();
+
+            response.Data = true;
+            response.Success = true;
+            response.Message = "Successfully !!";
+
+            return response;
+        }
+    
+    
     }
 }

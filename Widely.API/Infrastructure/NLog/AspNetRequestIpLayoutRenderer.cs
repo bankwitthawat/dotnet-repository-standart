@@ -27,7 +27,7 @@ namespace Widely.API.Infrastructure.NLog
             {
                 return;
             }
-            builder.Append(httpContext.Connection.RemoteIpAddress);
+            builder.Append($"{httpContext.Connection.RemoteIpAddress.MapToIPv4()}");
         }
     }
 }

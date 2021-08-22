@@ -11,6 +11,7 @@ using Widely.API.Infrastructure.Security;
 using Widely.BusinessLogic.Services;
 using Widely.BusinessLogic.Services.Auth;
 using Widely.BusinessLogic.Services.Base;
+using Widely.DataModel.ViewModels.Approles.ItemView;
 using Widely.DataModel.ViewModels.Approles.ListView;
 using Widely.DataModel.ViewModels.Common;
 
@@ -76,6 +77,14 @@ namespace Widely.API.Controllers
         public async Task<IActionResult> GetModuleTreeItem(string roleId)
         {
             var result = await this._approlesService.GetModuleList(roleId);
+            return Ok(result);
+        }
+
+        [ModulePermission("ROLES", "CREATE")]
+        [HttpPost("create-role")]
+        public async Task<IActionResult> CreateRole(AppRoleItemViewRequest request)
+        {
+            var result = await this._approlesService.Create(request);
             return Ok(result);
         }
     }

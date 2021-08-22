@@ -20,33 +20,64 @@ namespace Widely.DataAccess.Repositories.Auth
 
         public async Task<List<AppModule>> GetModulePermissionByRole(int id)
         {
-            var appPermission = await _context.Apppermission
-                .Include(i => i.Module)
-                .Include(i => i.Role)
-                .Where(x => x.RoleId == id && x.Module.IsActive == true).ToListAsync();
+            //var appPermission = await _context.Apppermission
+            //    .Include(i => i.Module)
+            //    .Include(i => i.Role)
+            //    .Where(x => x.RoleId == id && x.Module.IsActive == true).ToListAsync();
 
-            var myPermission = (from q in appPermission
-                                select new AppModule
-                                {
-                                    ID = q.Module.Id,
-                                    Title = q.Module.Title,
-                                    Subtitle = q.Module.Subtitle,
-                                    Type = q.Module.Type,
-                                    Icon = q.Module.Icon,
-                                    Path = q.Module.Path,
-                                    Sequence = q.Module.Sequence,
-                                    ParentID = q.Module.ParentId,
-                                    IsAccess = q.IsAccess,
-                                    IsCreate = q.IsCreate,
-                                    IsView = q.IsView,
-                                    IsEdit = q.IsEdit,
-                                    IsDelete = q.IsDelete,
+            //var myPermission = (from q in appPermission
+            //                    select new AppModule
+            //                    {
+            //                        ID = q.Module.Id,
+            //                        Title = q.Module.Title,
+            //                        Subtitle = q.Module.Subtitle,
+            //                        Type = q.Module.Type,
+            //                        Icon = q.Module.Icon,
+            //                        Path = q.Module.Path,
+            //                        Sequence = q.Module.Sequence,
+            //                        ParentID = q.Module.ParentId,
+            //                        IsAccess = q.IsAccess,
+            //                        IsCreate = q.IsCreate,
+            //                        IsView = q.IsView,
+            //                        IsEdit = q.IsEdit,
+            //                        IsDelete = q.IsDelete,
 
-                                    IsActive = q.Module.IsActive
+            //                        IsActive = q.Module.IsActive
 
-                                }).ToList();
+            //                    }).OrderBy(o => o.Sequence).ToList();
 
-            return myPermission;
+            //return myPermission;
+
+            var appModule = await _context.Appmodule.Where(x => x.IsActive == true).ToListAsync();
+            var appPermission = await _context.Apppermission.Where(x => x.RoleId == id).ToListAsync();
+
+            var result = (from q in appModule
+
+                          join per in appPermission on q.Id equals per.ModuleId into g1
+                          from subp in g1.DefaultIfEmpty()
+
+                          select new AppModule
+                          {
+                              ID = q.Id,
+                              Title = q.Title,
+                              Subtitle = q.Subtitle,
+                              Type = q.Type,
+                              Icon = q.Icon,
+                              Path = q.Path,
+                              Sequence = q.Sequence,
+                              ParentID = q.ParentId,
+                              IsAccess = subp == null ? false : subp.IsAccess,
+                              IsCreate = subp == null ? false : subp.IsAccess,
+                              IsView = subp == null ? false : subp.IsAccess,
+                              IsEdit = subp == null ? false : subp.IsAccess,
+                              IsDelete = subp == null ? false : subp.IsAccess,
+
+                              IsActive = q.IsActive
+
+                          }).OrderBy(o => o.Sequence).ToList();
+
+
+            return result;
         }
 
         public async Task<DataContext.Entities.Appusers> GetUserRelatedByToken(string token)
@@ -77,6 +108,28 @@ namespace Widely.DataAccess.Repositories.Auth
             }
 
             return user;
+        }
+
+        public async Task<List<int>> FindAncestorById(int moduleId)
+        {
+            var ancestor = await _context.Appmodule.FromSqlRaw(
+                @$"WITH RECURSIVE results AS
+                (
+                    SELECT *
+                    FROM    appmodule
+                    WHERE   ID = {moduleId}
+                    UNION ALL
+                    SELECT  t.*
+                    FROM    appmodule t
+                            INNER JOIN results r ON r.parentid = t.id
+                )
+                SELECT *
+                FROM    results;
+                ").ToListAsync();
+
+            var result = ancestor.Select(x => x.Id).ToList();
+
+            return result;
         }
     }
 }
