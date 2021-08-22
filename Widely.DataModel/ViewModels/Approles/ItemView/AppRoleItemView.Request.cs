@@ -1,18 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Widely.DataModel.ViewModels.Approles.ItemView
 {
-    public class AppRoleItemViewRequest
+    public class AppRoleCreateRequest
     {
-        public int id { get; set; }
+        [Required]
         public string name { get; set; }
         public string description { get; set; }
         public List<AppModuleList> moduleList { get; set; }
     }
+
+    public class AppRoleUpdateRequest
+    {
+        [Required]
+        public int id { get; set; }
+        [Required]
+        public string name { get; set; }
+        public string description { get; set; }
+        public List<AppModuleList> moduleList { get; set; }
+    }
+
 
     public class AppModuleList
     {

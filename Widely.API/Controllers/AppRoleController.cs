@@ -82,7 +82,7 @@ namespace Widely.API.Controllers
 
         [ModulePermission("ROLES", "CREATE")]
         [HttpPost("create-role")]
-        public async Task<IActionResult> CreateRole(AppRoleItemViewRequest request)
+        public async Task<IActionResult> CreateRole(AppRoleCreateRequest request)
         {
             var result = await this._approlesService.Create(request);
             return Ok(result);

@@ -68,11 +68,11 @@ namespace Widely.DataAccess.Repositories.Approles
                               Path = q.Path,
                               Sequence = q.Sequence,
                               ParentID = q.ParentId,
-                              IsAccess = subp?.IsAccess == null ? false : true,
-                              IsCreate = subp?.IsCreate == null ? false : true,
-                              IsView = subp?.IsView == null ? false : true,
-                              IsEdit = subp?.IsEdit == null ? false : true,
-                              IsDelete = subp?.IsDelete == null ? false : true,
+                              IsAccess = subp == null ? false : subp.IsAccess,
+                              IsCreate = subp == null ? false : subp.IsCreate,
+                              IsView = subp == null ? false : subp.IsView,
+                              IsEdit = subp == null ? false : subp.IsEdit,
+                              IsDelete = subp == null ? false : subp.IsDelete,
 
                               IsActive = q.IsActive
 

@@ -110,8 +110,7 @@ namespace Widely.BusinessLogic.Services.Auth
             await authTokenRepository.AddAsync(refreshToken);
 
             var userdto = _mapper.Map<LogInResponse>(user);
-            //userdto.AppModule = await GetModuleTreeList(null, userdto.RoleId.Value);
-            userdto.AppModule = await GetAncestor(userdto.RoleId.Value);
+            userdto.AppModule = await GetRootModules(userdto.RoleId.Value);
             userdto.RefreshToken = refreshToken.Token;
             userdto.TokenExpire = DateTime.Now.AddMinutes(tokenExpire);
             userdto.TokenTimeoutMins = ((int)userdto.TokenExpire.Subtract(DateTime.Now).TotalMinutes) - 1;
@@ -119,7 +118,7 @@ namespace Widely.BusinessLogic.Services.Auth
             return userdto;
         }
 
-        public async Task<List<AppModule>> GetAncestor(int roleId)
+        public async Task<List<AppModule>> GetRootModules(int roleId)
         {
             //init DbSet
             var moduleRepo = _unitOfWork.AsyncRepository<Appmodule>();
@@ -129,27 +128,27 @@ namespace Widely.BusinessLogic.Services.Auth
             //#1 ค้นหาทุก module และ permission ที่ Role นี้มีสิทธิ์
             var modules = await _authRepository.GetModulePermissionByRole(roleId);
 
-            //#2 ค้นหาที่ตาราง permission ที่ role นี้มีสิทธิ์โดยที่ตาราง
-            //#2.1 ตาราง permission จะเก็บ module ที่เป้น type = "basic" เท่านั้นเพื่อ
+            //#2 ค้นหาที่ตาราง permission ที่ role นี้มีสิทธิ์
+            //** ตาราง permission จะเก็บ module ที่เป้น type = "basic" เท่านั้น
             var modulePermission = await permissionRepo.ListAsync(x => x.RoleId == roleId);
 
-            //#3 ancentor = all parent related
+            //#3 ancentor is all parent related
             var ancentor = new List<int>();
 
-            //#4 นำค่าที่ได้จากตาราง permission มาหา parent (จาก ล่านถึงบนสุดตาม tree structure)
+            //#4 นำค่าที่ได้จากตาราง permission มาหา parent (จากล่างขึ้นบนสุดตาม tree structure)
             foreach (var item in modulePermission)
             {
-                var ancestors = await _authRepository.FindAncestorById(item.ModuleId);
+                List<int> ancestors = await _authRepository.FindAncestorById(item.ModuleId);
 
-                //#5 เมื่อเจอทุก parent และตัวเอง จะถูกเก็บในตัวแปร ancentor ไว้
+                //#5 เมื่อเจอทุก parent และตัวเอง จะถูกเก็บในตัวแปร ancentor ไว้ก่อน
                 ancentor.AddRange(ancestors);
             }
 
-            //#6 หาก children อยู่ใน tier ตัวเดียว parent จะต้องซ้ำกันเลยต้องกรอง parent ที่ซ้ำออก
+            //#6 หาก children อยู่ใน tier เดียวกัน parent จะต้องซ้ำกันเลยต้องกรอง parent ที่ซ้ำออก
             ancentor = ancentor.Distinct().ToList();
 
             //#7 ใช้ตาราง Appmodules ตั้งเพื่อหาทุก module โดยจะกรองจะตัวแปร ancentor
-            //**ทีนี้เราจะรู้แล้วว่า parent of children มีอะไรบ้าง
+            //**ทีนี้เราจะรู้แล้วว่า parent of children ตามสิทธิ์มีอะไรบ้าง
             var rootNode = modules.Where(x => ancentor.Any(r => r == x.ID)).ToList();
 
             //#8 ใช้ recursion มาทำงานเพื่อสร้าง tree structure และส่งออกไปเพื่อ render menu บนหน้าจอ

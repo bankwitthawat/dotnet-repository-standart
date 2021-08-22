@@ -153,13 +153,16 @@ namespace Widely.BusinessLogic.Services
             return mList;
         }
     
-        public async Task<ServiceResponse<bool>> Create(AppRoleItemViewRequest request)
+        public async Task<ServiceResponse<bool>> Create(AppRoleCreateRequest request)
         {
             var transactionDate = DateTime.Now;
             ServiceResponse<bool> response = new ServiceResponse<bool>();
 
             var roleRepository = _unitOfWork.AsyncRepository<Approles>();
             var permissionRepository = _unitOfWork.AsyncRepository<Apppermission>();
+
+            //จะเก็บเฉพาะ type ที่เป็น basic เท่านั้น
+            request.moduleList = request.moduleList.Where(x => x.type == "basic" && x.isAccess).ToList();
 
             var newRole = new Approles()
             {
@@ -188,7 +191,7 @@ namespace Widely.BusinessLogic.Services
 
             response.Data = true;
             response.Success = true;
-            response.Message = "Successfully !!";
+            response.Message = "Successfully";
 
             return response;
         }

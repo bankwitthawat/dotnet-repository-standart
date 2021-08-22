@@ -20,42 +20,12 @@ namespace Widely.DataAccess.Repositories.Auth
 
         public async Task<List<AppModule>> GetModulePermissionByRole(int id)
         {
-            //var appPermission = await _context.Apppermission
-            //    .Include(i => i.Module)
-            //    .Include(i => i.Role)
-            //    .Where(x => x.RoleId == id && x.Module.IsActive == true).ToListAsync();
-
-            //var myPermission = (from q in appPermission
-            //                    select new AppModule
-            //                    {
-            //                        ID = q.Module.Id,
-            //                        Title = q.Module.Title,
-            //                        Subtitle = q.Module.Subtitle,
-            //                        Type = q.Module.Type,
-            //                        Icon = q.Module.Icon,
-            //                        Path = q.Module.Path,
-            //                        Sequence = q.Module.Sequence,
-            //                        ParentID = q.Module.ParentId,
-            //                        IsAccess = q.IsAccess,
-            //                        IsCreate = q.IsCreate,
-            //                        IsView = q.IsView,
-            //                        IsEdit = q.IsEdit,
-            //                        IsDelete = q.IsDelete,
-
-            //                        IsActive = q.Module.IsActive
-
-            //                    }).OrderBy(o => o.Sequence).ToList();
-
-            //return myPermission;
-
             var appModule = await _context.Appmodule.Where(x => x.IsActive == true).ToListAsync();
             var appPermission = await _context.Apppermission.Where(x => x.RoleId == id).ToListAsync();
 
             var result = (from q in appModule
-
                           join per in appPermission on q.Id equals per.ModuleId into g1
                           from subp in g1.DefaultIfEmpty()
-
                           select new AppModule
                           {
                               ID = q.Id,
@@ -75,7 +45,6 @@ namespace Widely.DataAccess.Repositories.Auth
                               IsActive = q.IsActive
 
                           }).OrderBy(o => o.Sequence).ToList();
-
 
             return result;
         }
