@@ -15,7 +15,7 @@ using Widely.DataModel.ViewModels.Auth.LogIn;
 using Widely.DataModel.ViewModels.Common;
 using Widely.Infrastructure.Exceptions;
 
-namespace Widely.BusinessLogic.Services
+namespace Widely.BusinessLogic.Services.AppRole
 {
     public class ApprolesService : BaseService
     {
