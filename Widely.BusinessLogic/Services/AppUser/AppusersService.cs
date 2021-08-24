@@ -38,9 +38,14 @@ namespace Widely.BusinessLogic.Services.AppUser
             //var filterData = await userRepository.All();
             var filterData = await _appusersRepository.GetUserAllRelated();
 
-            if (!string.IsNullOrEmpty(filter?.criteria?.name))
+            if (!string.IsNullOrEmpty(filter?.criteria?.username))
             {
-                filterData = filterData.Where(x => ($"{x.Title} {x.Fname} {x.Lname}").Contains(filter.criteria.name.Trim())).ToList();
+                filterData = filterData.Where(x => x.Username.Contains(filter.criteria.username)).ToList();
+            }
+
+            if (!string.IsNullOrEmpty(filter?.criteria?.fullName))
+            {
+                filterData = filterData.Where(x => ($"{x.Title} {x.Fname} {x.Lname}").Contains(filter.criteria.fullName.Trim())).ToList();
             }
 
 

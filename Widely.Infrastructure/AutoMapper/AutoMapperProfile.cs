@@ -37,6 +37,7 @@ namespace Widely.Infrastructure.AutoMapper
                 .ForMember(dest => dest.RoleId, src => src.MapFrom(s => s.Role == null ? (int?)null : s.Role.Id))
                 .ForMember(dest => dest.RoleName, src => src.MapFrom(s => s.Role == null ? string.Empty : s.Role.Name))
                 .ForMember(dest => dest.RoleDescription, src => src.MapFrom(s => s.Role == null ? string.Empty : s.Role.Description))
+                .ForMember(dest => dest.FullName, src => src.MapFrom(s => $"{s.Title}{s.Fname} {s.Lname}"))
                 ;
         }
     }

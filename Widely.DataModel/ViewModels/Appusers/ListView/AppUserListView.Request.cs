@@ -8,6 +8,7 @@ namespace Widely.DataModel.ViewModels.Appusers.ListView
 {
     public class AppUserListViewRequest
     {
-        public string name { get; set; }
+        public string username { get; set; }
+        public string fullName { get; set; }
     }
 }
