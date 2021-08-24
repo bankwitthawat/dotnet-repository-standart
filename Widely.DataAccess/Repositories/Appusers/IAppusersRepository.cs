@@ -9,6 +9,6 @@ namespace Widely.DataAccess.Repositories.Appusers
 {
     public interface IAppusersRepository : IGenericRepository<Widely.DataAccess.DataContext.Entities.Appusers>
     {
-        
+        Task<List<Widely.DataAccess.DataContext.Entities.Appusers>> GetUserAllRelated();
     }
 }

@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Widely.BusinessLogic.Services;
 using Widely.BusinessLogic.Services.AppRole;
+using Widely.BusinessLogic.Services.AppUser;
 using Widely.BusinessLogic.Services.Auth;
 using Widely.BusinessLogic.Services.Base;
 using Widely.BusinessLogic.Utilities;
@@ -56,6 +57,7 @@ namespace Widely.API.Extensions
                 .AddScoped<BaseService>()
                 .AddScoped<AuthService>()
                 .AddScoped<ApprolesService>()
+                .AddScoped<AppusersService>()
                 // add new service here.
                 ;
         }
