@@ -10,6 +10,9 @@ namespace Widely.DataModel.ViewModels.Appusers.ListView
     {
         public int ID { get; set; }
         public string Username { get; set; }
+        public string RoleId { get; set; }
+        public string RoleName { get; set; }
+        public string RoleDescription { get; set; }
         public string FullName { get; set; }
         public string BirthDate { get; set; }
         public string Email { get; set; }

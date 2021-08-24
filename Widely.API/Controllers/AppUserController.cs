@@ -29,7 +29,8 @@ namespace Widely.API.Controllers
         [HttpPost("list")]
         public async Task<IActionResult> GetUserList(SearchCriteria<AppUserListViewRequest> request)
         {
-            return Ok();
+            var result = await this._appusersService.GetList(request);
+            return Ok(result);
         }
     }
 }
