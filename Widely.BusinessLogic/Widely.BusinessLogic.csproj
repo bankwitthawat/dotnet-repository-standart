@@ -16,6 +16,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Widely.DataAccess\Widely.DataAccess.csproj" />
     <ProjectReference Include="..\Widely.DataModel\Widely.DataModel.csproj" />
+    <ProjectReference Include="..\Widely.Infrastructure\Widely.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

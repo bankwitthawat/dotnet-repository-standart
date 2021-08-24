@@ -6,6 +6,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Infrastructure\**" />
+    <Content Remove="Infrastructure\**" />
+    <EmbeddedResource Remove="Infrastructure\**" />
+    <None Remove="Infrastructure\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.9" />
     <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
@@ -27,6 +34,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Widely.BusinessLogic\Widely.BusinessLogic.csproj" />
     <ProjectReference Include="..\Widely.DataAccess\Widely.DataAccess.csproj" />
+    <ProjectReference Include="..\Widely.Infrastructure\Widely.Infrastructure.csproj" />
 
   </ItemGroup>
 

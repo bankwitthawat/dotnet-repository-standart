@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Widely.API.Infrastructure.AutoMapper;
 using Widely.BusinessLogic.Services;
 using Widely.BusinessLogic.Services.Auth;
 using Widely.BusinessLogic.Services.Base;
@@ -17,6 +16,7 @@ using Widely.DataAccess.Repositories.Appusers;
 using Widely.DataAccess.Repositories.Auth;
 using Widely.DataAccess.Repositories.Base;
 using Widely.DataAccess.Repositories.UnitOfWork;
+using Widely.Infrastructure.AutoMapper;
 
 namespace Widely.API.Extensions
 {

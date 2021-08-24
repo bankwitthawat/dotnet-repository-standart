@@ -12,9 +12,9 @@ using Widely.DataModel.ViewModels.Auth.Register;
 using Widely.BusinessLogic.Services.Base;
 using Microsoft.Extensions.Logging;
 using NLog;
-using Widely.API.Infrastructure.Security;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Widely.Infrastructure.Security;
 
 namespace Widely.API.Controllers
 {

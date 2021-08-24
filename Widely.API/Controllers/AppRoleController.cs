@@ -7,13 +7,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Widely.API.Infrastructure.Security;
 using Widely.BusinessLogic.Services;
 using Widely.BusinessLogic.Services.Auth;
 using Widely.BusinessLogic.Services.Base;
 using Widely.DataModel.ViewModels.Approles.ItemView;
 using Widely.DataModel.ViewModels.Approles.ListView;
 using Widely.DataModel.ViewModels.Common;
+using Widely.Infrastructure.Security;
 
 namespace Widely.API.Controllers
 {
@@ -87,5 +87,23 @@ namespace Widely.API.Controllers
             var result = await this._approlesService.Create(request);
             return Ok(result);
         }
+
+        [ModulePermission("ROLES", "EDIT")]
+        [HttpPost("update-role")]
+        public async Task<IActionResult> UpdateRole(AppRoleUpdateRequest request)
+        {
+            var result = await this._approlesService.Update(request);
+            return Ok(result);
+        }
+        
+        [ModulePermission("ROLES", "DELETE")]
+        [HttpPost("delete-role")]
+        public async Task<IActionResult> DeleteRole(AppRoleDeleteRequest request)
+        {
+            var result = await this._approlesService.Delete(request);
+            return Ok(result);
+        }
+
+
     }
 }

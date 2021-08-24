@@ -8,7 +8,6 @@ namespace Widely.DataAccess.DataContext.Entities
 {
     public partial class Apppermission
     {
-        public int Id { get; set; }
         public int RoleId { get; set; }
         public int ModuleId { get; set; }
         public bool? IsAccess { get; set; }

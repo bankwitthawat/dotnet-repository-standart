@@ -8,8 +8,8 @@ using System.Linq;
 using System.Net;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Widely.API.Infrastructure.Exceptions;
 using Widely.DataModel.ViewModels.Common;
+using Widely.Infrastructure.Exceptions;
 
 namespace Widely.API.Extensions
 {
@@ -55,13 +55,25 @@ namespace Widely.API.Extensions
                 }
 
                 _logger.Error($"Something went wrong: {response.StatusCode} {error}");
+
+                var options = new JsonSerializerOptions
+                {
+                    DictionaryKeyPolicy = JsonNamingPolicy.CamelCase,
+                    WriteIndented = true
+                };
+
                 var result = JsonSerializer.Serialize(
-                    new ServiceResponse<string>
+                    //new ServiceResponse<string>
+                    //{
+                    //    Data = null,
+                    //    Success = false,
+                    //    Message = $"{error?.Message}"
+                    //}, options);
+                    new
                     {
-                        Data = null,
-                        Success = false,
-                        Message = $"Something went wrong: {error?.Message}"
+                        message = error?.Message
                     });
+
                 await response.WriteAsync(result);
             }
         }

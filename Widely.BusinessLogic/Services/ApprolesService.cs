@@ -13,6 +13,7 @@ using Widely.DataModel.ViewModels.Approles.ItemView;
 using Widely.DataModel.ViewModels.Approles.ListView;
 using Widely.DataModel.ViewModels.Auth.LogIn;
 using Widely.DataModel.ViewModels.Common;
+using Widely.Infrastructure.Exceptions;
 
 namespace Widely.BusinessLogic.Services
 {
@@ -25,7 +26,7 @@ namespace Widely.BusinessLogic.Services
             , IUnitOfWork unitOfWork
             , IMapper mapper
             , IApprolesRepository approlesRepository
-            ) : base (httpContextAccessor, unitOfWork)
+            ) : base(httpContextAccessor, unitOfWork)
         {
             _mapper = mapper;
             _approlesRepository = approlesRepository;
@@ -75,7 +76,7 @@ namespace Widely.BusinessLogic.Services
 
             var dtoResult = _mapper.Map<List<AppRoleResponse>>(filterData);
 
-            return new GridResult<AppRoleResponse>() 
+            return new GridResult<AppRoleResponse>()
             {
                 Items = dtoResult,
                 pagination = new Pagination
@@ -90,14 +91,14 @@ namespace Widely.BusinessLogic.Services
             };
         }
 
-        public async Task<ServiceResponse<List<AppModule>>> GetModuleList(string roleId)
+        public async Task<ServiceResponse<AppRoleItemViewResponse>> GetModuleList(string roleId)
         {
-            ServiceResponse<List<AppModule>> response = new ServiceResponse<List<AppModule>>();
+            ServiceResponse<AppRoleItemViewResponse> response = new ServiceResponse<AppRoleItemViewResponse>();
 
             try
             {
                 int.TryParse(roleId, out int id);
-                var rootNode = new List<AppModule>();
+                var rootNode = new AppRoleItemViewResponse();
 
                 if (id > 0)
                 {
@@ -108,7 +109,12 @@ namespace Widely.BusinessLogic.Services
                     rootNode = await _approlesRepository.GetModulePermission();
                 }
 
-                response.Data = await this.GetModuleTreeList(null, roleId, rootNode);
+                response.Data = new AppRoleItemViewResponse();
+                response.Data.id = rootNode.id;
+                response.Data.name = rootNode.name;
+                response.Data.description = rootNode.description;
+                response.Data.moduleList = await this.GetModuleTreeList(null, roleId, rootNode.moduleList);
+               
                 response.Success = true;
                 response.Message = "Ok";
             }
@@ -116,7 +122,7 @@ namespace Widely.BusinessLogic.Services
             {
                 throw new Exception(e.Message);
             }
-            
+
             return response;
         }
 
@@ -152,7 +158,7 @@ namespace Widely.BusinessLogic.Services
 
             return mList;
         }
-    
+
         public async Task<ServiceResponse<bool>> Create(AppRoleCreateRequest request)
         {
             var transactionDate = DateTime.Now;
@@ -195,7 +201,88 @@ namespace Widely.BusinessLogic.Services
 
             return response;
         }
-    
-    
+
+        public async Task<ServiceResponse<bool>> Update(AppRoleUpdateRequest request)
+        {
+            var transactionDate = DateTime.Now;
+            ServiceResponse<bool> response = new ServiceResponse<bool>();
+
+            var roleRepository = _unitOfWork.AsyncRepository<Approles>();
+            var permissionRepository = _unitOfWork.AsyncRepository<Apppermission>();
+
+            //จะเก็บเฉพาะ type ที่เป็น basic เท่านั้น
+            request.moduleList = request.moduleList.Where(x => x.type == "basic" && x.isAccess).ToList();
+
+
+            var role = await roleRepository.GetAsync(x => x.Id == request.id);
+            var permission = await permissionRepository.ListAsync(x => x.RoleId == request.id);
+
+            if (role == null)
+            {
+                throw new AppException("This role not found.");
+            }
+
+            await permissionRepository.RemoveRangeAsync(permission);
+
+            role.Name = request.name;
+            role.Description = request.description;
+            role.CreatedBy = GetUserName();
+            role.CreatedDate = transactionDate;
+            role.Apppermission = (from q in request.moduleList
+                                  select new Apppermission
+                                  {
+                                      RoleId = role.Id,
+                                      ModuleId = q.id,
+                                      IsAccess = q.isAccess,
+                                      IsCreate = q.isCreate,
+                                      IsEdit = q.isEdit,
+                                      IsView = q.isView,
+                                      IsDelete = q.isDelete,
+                                      ModifiedBy = GetUserName(),
+                                      ModifiedDate = transactionDate
+                                  }).ToList();
+
+
+            await roleRepository.UpdateAsync(role);
+            await _unitOfWork.CommitAsync();
+
+            response.Data = true;
+            response.Success = true;
+            response.Message = "Successfully";
+
+            return response;
+        }
+
+        public async Task<ServiceResponse<bool>> Delete(AppRoleDeleteRequest request)
+        {
+            //init dbSet
+            var roleRepository = _unitOfWork.AsyncRepository<Approles>();
+            var userRepository = _unitOfWork.AsyncRepository<Appusers>();
+
+            ServiceResponse<bool> response = new ServiceResponse<bool>();
+
+            var role = await roleRepository.GetAsync(x => x.Id == request.id);
+            var user = await userRepository.ListAsync(x => x.RoleId == request.id);
+
+            if (role == null)
+            {
+                throw new AppException("This role not found.");
+            }
+            else if (user.Count > 0)
+            {
+                throw new AppException("Sorry, The role is currently turned on.");
+            }
+            else
+            {
+                //delete with casecade table apppermission
+                await roleRepository.RemoveAsync(role);
+                await _unitOfWork.CommitAsync();
+            }
+
+            response.Data = true;
+            response.Success = true;
+            response.Message = "Delete successfully.";
+            return response;
+        }
     }
 }

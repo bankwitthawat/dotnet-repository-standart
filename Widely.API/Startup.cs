@@ -20,8 +20,6 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Widely.API.Extensions;
-using Widely.API.Infrastructure.NLog;
-using Widely.API.Infrastructure.Security;
 
 namespace Widely.API
 {
@@ -31,7 +29,6 @@ namespace Widely.API
         {
             Configuration = configuration;
             NLog.Config.ConfigurationItemFactory.Default.LayoutRenderers.RegisterDefinition("aspnet-request-ip", typeof(NLog.Web.LayoutRenderers.AspNetRequestIpLayoutRenderer));
-            NLog.Config.ConfigurationItemFactory.Default.LayoutRenderers.RegisterDefinition("aspnet-request-username", typeof(UserRequestLayoutRenderer));
         }
 
         public IConfiguration Configuration { get; }

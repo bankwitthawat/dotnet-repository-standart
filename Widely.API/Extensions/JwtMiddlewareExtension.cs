@@ -4,8 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Widely.API.Infrastructure.Exceptions;
 using Widely.BusinessLogic.Utilities;
+using Widely.Infrastructure.Exceptions;
 
 namespace Widely.API.Extensions
 {

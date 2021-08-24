@@ -59,19 +59,15 @@ namespace Widely.DataAccess.DataContext
 
             modelBuilder.Entity<Apppermission>(entity =>
             {
-                entity.HasKey(e => new { e.Id, e.RoleId, e.ModuleId })
+                entity.HasKey(e => new { e.RoleId, e.ModuleId })
                     .HasName("PRIMARY")
-                    .HasAnnotation("MySql:IndexPrefixLength", new[] { 0, 0, 0 });
+                    .HasAnnotation("MySql:IndexPrefixLength", new[] { 0, 0 });
 
                 entity.ToTable("apppermission");
 
                 entity.HasIndex(e => e.ModuleId, "FK_AppPermission_ModuleID_ID_idx");
 
                 entity.HasIndex(e => e.RoleId, "FK_AppPermission_RoleID_ID_idx");
-
-                entity.Property(e => e.Id)
-                    .ValueGeneratedOnAdd()
-                    .HasColumnName("ID");
 
                 entity.Property(e => e.RoleId).HasColumnName("RoleID");
 
@@ -90,7 +86,6 @@ namespace Widely.DataAccess.DataContext
                 entity.HasOne(d => d.Role)
                     .WithMany(p => p.Apppermission)
                     .HasForeignKey(d => d.RoleId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_AppPermission_RoleID_ID");
             });
 
@@ -254,19 +249,25 @@ namespace Widely.DataAccess.DataContext
 
             modelBuilder.Entity<HomeworkProductCustomer>(entity =>
             {
+                entity.HasKey(e => new { e.Id, e.ProductId, e.CustomerTypeId })
+                    .HasName("PRIMARY")
+                    .HasAnnotation("MySql:IndexPrefixLength", new[] { 0, 0, 0 });
+
                 entity.ToTable("homework_product_customer");
 
                 entity.HasIndex(e => e.CustomerTypeId, "FK_CustomerTypeID_ID_idx");
 
                 entity.HasIndex(e => e.ProductId, "FK_ProducID_ID_idx");
 
-                entity.Property(e => e.Id).HasColumnName("ID");
+                entity.Property(e => e.Id)
+                    .ValueGeneratedOnAdd()
+                    .HasColumnName("ID");
+
+                entity.Property(e => e.ProductId).HasColumnName("ProductID");
 
                 entity.Property(e => e.CustomerTypeId).HasColumnName("CustomerTypeID");
 
                 entity.Property(e => e.Price).HasPrecision(18, 2);
-
-                entity.Property(e => e.ProductId).HasColumnName("ProductID");
 
                 entity.HasOne(d => d.CustomerType)
                     .WithMany(p => p.HomeworkProductCustomer)

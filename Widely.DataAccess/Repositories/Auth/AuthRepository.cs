@@ -37,10 +37,10 @@ namespace Widely.DataAccess.Repositories.Auth
                               Sequence = q.Sequence,
                               ParentID = q.ParentId,
                               IsAccess = subp == null ? false : subp.IsAccess,
-                              IsCreate = subp == null ? false : subp.IsAccess,
-                              IsView = subp == null ? false : subp.IsAccess,
-                              IsEdit = subp == null ? false : subp.IsAccess,
-                              IsDelete = subp == null ? false : subp.IsAccess,
+                              IsCreate = subp == null ? false : subp.IsCreate,
+                              IsView = subp == null ? false : subp.IsView,
+                              IsEdit = subp == null ? false : subp.IsEdit,
+                              IsDelete = subp == null ? false : subp.IsDelete,
 
                               IsActive = q.IsActive
 

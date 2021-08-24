@@ -15,6 +15,7 @@ namespace Widely.DataModel.ViewModels.Approles.ItemView
         public List<AppModuleList> moduleList { get; set; }
     }
 
+
     public class AppRoleUpdateRequest
     {
         [Required]
@@ -23,6 +24,12 @@ namespace Widely.DataModel.ViewModels.Approles.ItemView
         public string name { get; set; }
         public string description { get; set; }
         public List<AppModuleList> moduleList { get; set; }
+    }
+
+    public class AppRoleDeleteRequest
+    {
+        [Required]
+        public int id { get; set; }
     }
 
 
