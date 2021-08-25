@@ -325,11 +325,11 @@ namespace Widely.BusinessLogic.Services.Auth
             if (user == null) 
                 return response;
 
-            var refreshToken = user.Authtokens.Single(x => x.Token == oldToken);
-            if (refreshToken == null)
-                return response;
+            //var refreshToken = user.Authtokens.Single(x => x.Token == oldToken);
+            //if (refreshToken == null)
+            //    return response;
 
-            await authTokenRepository.RemoveAsync(refreshToken);
+            //await authTokenRepository.RemoveAsync(refreshToken);
 
             response.Data = await this.GetLoginUserInfo(user);
             response.Success = true;
