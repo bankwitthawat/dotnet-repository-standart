@@ -48,6 +48,16 @@ namespace Widely.BusinessLogic.Services.AppUser
                 filterData = filterData.Where(x => ($"{x.Title} {x.Fname} {x.Lname}").Contains(filter.criteria.fullName.Trim())).ToList();
             }
 
+            if (filter?.criteria?.roleId != null)
+            {
+                filterData = filterData.Where(x => x.RoleId == filter.criteria.roleId.Value).ToList();
+            }
+
+            if (filter?.criteria?.isActive != null)
+            {
+                filterData = filterData.Where(x => x.IsActive == filter.criteria.isActive.Value).ToList();
+            }
+
 
             var TotalRecord = filterData == null ? 0 : filterData.Count();
             filter.gridCriteria = filter.gridCriteria == null ? new GridCriteria { page = 1, pageSize = 10 } : filter.gridCriteria;
@@ -87,6 +97,30 @@ namespace Widely.BusinessLogic.Services.AppUser
                 }
             };
 
+        }
+    
+        public async Task<ServiceResponse<List<OptionItems>>> GetRoleList()
+        {
+            // init DbSet
+            var roleRepo = _unitOfWork.AsyncRepository<Approles>();
+
+            // init response
+            ServiceResponse<List<OptionItems>> response = new ServiceResponse<List<OptionItems>>();
+
+            var roleList = await roleRepo.All();
+            var result = (from q in roleList
+                          select new OptionItems 
+                          { 
+                            id = q.Id,
+                            value = $"{q.Id}",
+                            label = $"{q.Name}"
+                          }).ToList();
+
+            response.Data = result;
+            response.Success = true;
+            response.Message = "OK";
+
+            return response;
         }
     }
 }

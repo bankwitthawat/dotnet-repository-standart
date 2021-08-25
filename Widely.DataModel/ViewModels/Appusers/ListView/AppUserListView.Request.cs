@@ -10,5 +10,7 @@ namespace Widely.DataModel.ViewModels.Appusers.ListView
     {
         public string username { get; set; }
         public string fullName { get; set; }
+        public int? roleId { get; set; }
+        public bool? isActive { get; set; }
     }
 }

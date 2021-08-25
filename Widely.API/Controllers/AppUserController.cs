@@ -32,5 +32,19 @@ namespace Widely.API.Controllers
             var result = await this._appusersService.GetList(request);
             return Ok(result);
         }
+        
+        /// <summary>
+        /// API endpoint to initial all role for dropdownlist
+        /// </summary>
+        /// <returns></returns>
+        [ModulePermission("USERS", "*")]
+        [HttpGet("role-list")]
+        public async Task<IActionResult> GetRoleToDropDownList()
+        {
+            var result = await this._appusersService.GetRoleList();
+            return Ok(result);
+        }
+
+
     }
 }

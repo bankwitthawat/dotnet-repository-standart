@@ -63,7 +63,7 @@ namespace Widely.BusinessLogic.Services.Auth
                 response.Success = false;
                 response.Message = "This account has been suspended, please contract adminstrator.";
             }
-            else if (user.LoginAttemptCount >= 5)
+            else if (user.LoginAttemptCount > 5)
             {
                 response.Success = false;
                 response.Message = "This account has been locked, please contract adminstrator.";
