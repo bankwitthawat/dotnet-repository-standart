@@ -25,13 +25,17 @@ namespace Widely.API
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public IConfiguration Configuration { get; }
+        public IHostEnvironment HostEnvironment { get; }
+
+        public Startup(IConfiguration configuration,IHostEnvironment env)
         {
+            HostEnvironment = env;
             Configuration = configuration;
             NLog.Config.ConfigurationItemFactory.Default.LayoutRenderers.RegisterDefinition("aspnet-request-ip", typeof(NLog.Web.LayoutRenderers.AspNetRequestIpLayoutRenderer));
         }
 
-        public IConfiguration Configuration { get; }
+        
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
