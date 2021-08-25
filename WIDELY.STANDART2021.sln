@@ -15,7 +15,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Report", "Report", "{E73F99
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{0605E1BB-BB64-46FB-9076-5B5667B89128}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Widely.Infrastructure", "Widely.Infrastructure\Widely.Infrastructure.csproj", "{6971AED8-4C78-4E80-9B58-02C8FDB0C557}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Widely.Infrastructure", "Widely.Infrastructure\Widely.Infrastructure.csproj", "{6971AED8-4C78-4E80-9B58-02C8FDB0C557}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Widely.RDLCDesign", "Widely.RDLCDesign\Widely.RDLCDesign.csproj", "{A26EE7E7-2920-455E-851B-0DA5A1D830C9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,6 +45,10 @@ Global
 		{6971AED8-4C78-4E80-9B58-02C8FDB0C557}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6971AED8-4C78-4E80-9B58-02C8FDB0C557}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6971AED8-4C78-4E80-9B58-02C8FDB0C557}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A26EE7E7-2920-455E-851B-0DA5A1D830C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A26EE7E7-2920-455E-851B-0DA5A1D830C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A26EE7E7-2920-455E-851B-0DA5A1D830C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A26EE7E7-2920-455E-851B-0DA5A1D830C9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
