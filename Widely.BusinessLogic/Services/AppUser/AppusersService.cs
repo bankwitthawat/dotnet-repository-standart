@@ -6,11 +6,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Widely.BusinessLogic.Services.Base;
+using Widely.BusinessLogic.Utilities;
 using Widely.DataAccess.DataContext.Entities;
 using Widely.DataAccess.Repositories.Appusers;
 using Widely.DataAccess.Repositories.UnitOfWork;
 using Widely.DataModel.ViewModels.Appusers.ListView;
 using Widely.DataModel.ViewModels.Common;
+using Widely.Infrastructure.Exceptions;
 
 namespace Widely.BusinessLogic.Services.AppUser
 {
@@ -75,7 +77,7 @@ namespace Widely.BusinessLogic.Services.AppUser
                 }
                 else
                 {
-                    filterData = filterData.OrderBy(x => x.Id).ToList(); //dufault initial load
+                    filterData = filterData.OrderByDescending(x => x.Id).ToList(); //dufault initial load
                 }
                 filterData = filterData.Skip(filter.gridCriteria.skip).Take(filter.gridCriteria.Take).ToList();
             }
@@ -119,6 +121,46 @@ namespace Widely.BusinessLogic.Services.AppUser
             response.Data = result;
             response.Success = true;
             response.Message = "OK";
+
+            return response;
+        }
+
+        public async Task<ServiceResponse<bool>> Create(AppUserCreateRequest request)
+        {
+            var transactionDate = DateTime.Now;
+            ServiceResponse<bool> response = new ServiceResponse<bool>();
+
+            //init DbSet
+            var userRepository = _unitOfWork.AsyncRepository<Appusers>();
+
+            var isDuplicate = await userRepository.GetAsync(x => x.Username.ToLower() == request.username.ToLower());
+            if (isDuplicate != null)
+            {
+                throw new AppException("This username is duplicate.");
+            }
+
+            PasswordHashUtility.CreatePasswordHash(request.username, request.password, out byte[] passwordHash, out byte[] passwordSalt);
+
+
+            var newUser = new Appusers()
+            {
+                Username = request.username.Trim(),
+                RoleId = request.roleId,
+                PasswordHash = passwordHash,
+                PasswordSalt = passwordSalt,
+                Fname = !string.IsNullOrEmpty(request.fName) ? request.fName.Trim() : null,
+                Lname = !string.IsNullOrEmpty(request.lName) ? request.lName.Trim() : null,
+                MobilePhone = !string.IsNullOrEmpty(request.mobilePhone) ? request.mobilePhone.Trim() : null,
+                IsActive = request.isActive,
+                IsForceChangePwd = request.forceChangePassword
+            };
+
+            await userRepository.AddAsync(newUser);
+            await _unitOfWork.CommitAsync();
+
+            response.Data = true;
+            response.Success = true;
+            response.Message = "Create Successfully. !!";
 
             return response;
         }

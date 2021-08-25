@@ -46,5 +46,14 @@ namespace Widely.API.Controllers
         }
 
 
+        [ModulePermission("USERS", "CREATE")]
+        [HttpPost("craete-user")]
+        public async Task<IActionResult> CraeteUser(AppUserCreateRequest request)
+        {
+            var result = await this._appusersService.Create(request);
+            return Ok(result);
+        }
+
+
     }
 }
