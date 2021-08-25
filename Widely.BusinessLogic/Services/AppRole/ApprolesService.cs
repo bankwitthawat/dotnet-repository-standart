@@ -253,7 +253,7 @@ namespace Widely.BusinessLogic.Services.AppRole
             return response;
         }
 
-        public async Task<ServiceResponse<bool>> Delete(AppRoleDeleteRequest request)
+        public async Task<ServiceResponse<bool>> Delete(int id)
         {
             //init dbSet
             var roleRepository = _unitOfWork.AsyncRepository<Approles>();
@@ -261,8 +261,8 @@ namespace Widely.BusinessLogic.Services.AppRole
 
             ServiceResponse<bool> response = new ServiceResponse<bool>();
 
-            var role = await roleRepository.GetAsync(x => x.Id == request.id);
-            var user = await userRepository.ListAsync(x => x.RoleId == request.id);
+            var role = await roleRepository.GetAsync(x => x.Id == id);
+            var user = await userRepository.ListAsync(x => x.RoleId == id);
 
             if (role == null)
             {

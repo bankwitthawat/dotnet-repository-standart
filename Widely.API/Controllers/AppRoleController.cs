@@ -90,7 +90,7 @@ namespace Widely.API.Controllers
         }
 
         [ModulePermission("ROLES", "EDIT")]
-        [HttpPost("update-role")]
+        [HttpPut("update-role")]
         public async Task<IActionResult> UpdateRole(AppRoleUpdateRequest request)
         {
             var result = await this._approlesService.Update(request);
@@ -98,10 +98,10 @@ namespace Widely.API.Controllers
         }
         
         [ModulePermission("ROLES", "DELETE")]
-        [HttpPost("delete-role")]
-        public async Task<IActionResult> DeleteRole(AppRoleDeleteRequest request)
+        [HttpDelete("delete-role")]
+        public async Task<IActionResult> DeleteRole(int id)
         {
-            var result = await this._approlesService.Delete(request);
+            var result = await this._approlesService.Delete(id);
             return Ok(result);
         }
 
