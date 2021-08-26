@@ -152,7 +152,10 @@ namespace Widely.BusinessLogic.Services.AppUser
                 Lname = !string.IsNullOrEmpty(request.lName) ? request.lName.Trim() : null,
                 MobilePhone = !string.IsNullOrEmpty(request.mobilePhone) ? request.mobilePhone.Trim() : null,
                 IsActive = request.isActive,
-                IsForceChangePwd = request.forceChangePassword
+                IsForceChangePwd = request.forceChangePassword,
+
+                CreatedBy = GetUserName(),
+                CreatedDate = transactionDate
             };
 
             await userRepository.AddAsync(newUser);

@@ -141,7 +141,7 @@ namespace Widely.API.Controllers
                    .Debug("failed by token : {token}", tokenRequest.Token);
                 #endregion
 
-                return Unauthorized(new { message = "Token not found" });
+                return Unauthorized(new { message = response.Message });
             }
 
             #region Logging
@@ -195,7 +195,7 @@ namespace Widely.API.Controllers
                    .Debug("Token is required.");
                 #endregion
 
-                return Unauthorized(new { Message = "Token is required" });
+                return Unauthorized(new { message = "Token is required" });
             }
 
             var response = await this._authService.RefreshToken(tokenRequest.Token);
@@ -210,7 +210,7 @@ namespace Widely.API.Controllers
                    .Debug("failed by token : {token}", tokenRequest.Token);
                 #endregion
 
-                return Unauthorized(response.Message);
+                return Unauthorized(new { message = response.Message });
             }
 
             #region Logging

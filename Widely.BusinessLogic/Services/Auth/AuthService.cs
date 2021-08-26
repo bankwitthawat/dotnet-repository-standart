@@ -15,6 +15,7 @@ using Widely.DataModel.ViewModels.Auth.LogIn;
 using Widely.DataModel.ViewModels.Auth.Register;
 using Widely.DataModel.ViewModels.Auth.Token;
 using Widely.DataModel.ViewModels.Common;
+using Widely.Infrastructure.Exceptions;
 
 namespace Widely.BusinessLogic.Services.Auth
 {
@@ -313,17 +314,33 @@ namespace Widely.BusinessLogic.Services.Auth
             ServiceResponse<LogInResponse> response = new ServiceResponse<LogInResponse>();
 
             var username = GetUserID();
-            if (string.IsNullOrEmpty(username))
-                return response; 
-
             var user = await _authRepository.GetUserRelatedByToken(oldToken);
-            if (user == null) 
-                return response;
 
-            response.Data = await this.GetLoginUserInfo(user);
-            response.Success = true;
-            response.Message = "Successfully. !!";
-           
+            if (string.IsNullOrEmpty(username))
+            {
+                response.Data = null;
+                response.Success = false;
+                response.Message = "Username is empty in request.";
+            }
+            else if (string.IsNullOrEmpty(oldToken))
+            {
+                response.Data = null;
+                response.Success = false;
+                response.Message = "Token is required";
+            }
+            else if (user == null)
+            {
+                response.Data = null;
+                response.Success = false;
+                response.Message = "Token not found.";
+            }
+            else
+            {
+                response.Data = await this.GetLoginUserInfo(user);
+                response.Success = true;
+                response.Message = "Successfully. !!";
+            }
+
             await _unitOfWork.CommitAsync();
 
             return response;
@@ -374,24 +391,36 @@ namespace Widely.BusinessLogic.Services.Auth
 
             return response;
         }
-   
+
         public async Task<ServiceResponse<bool>> Logout(string oldtoken)
         {
             ServiceResponse<bool> response = new ServiceResponse<bool>() { Success = false, Data = false };
             var authTokenRepository = _unitOfWork.AsyncRepository<Authtokens>();
 
             var token = await authTokenRepository.GetAsync(_ => _.Token == oldtoken);
-            if (token == null)
+
+            if (string.IsNullOrEmpty(oldtoken))
             {
-                return response;
+
+                response.Data = false;
+                response.Success = false;
+                response.Message = "Token is required";
+            }
+            else if (token == null)
+            {
+                response.Data = false;
+                response.Success = false;
+                response.Message = "Token not found.";
+            }
+            else
+            {
+                response.Data = true;
+                response.Success = true;
+                response.Message = "Logout successfully. !!";
+                await authTokenRepository.RemoveAsync(token);
             }
 
-            await authTokenRepository.RemoveAsync(token);
             await _unitOfWork.CommitAsync();
-
-            response.Data = true;
-            response.Success = true;
-            response.Message = "Successfully. !!";
 
             return response;
         }
