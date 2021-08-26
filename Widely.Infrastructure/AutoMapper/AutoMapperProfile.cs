@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Widely.DataAccess.DataContext.Entities;
 using Widely.DataModel.ViewModels.Approles.ListView;
+using Widely.DataModel.ViewModels.Appusers.ItemView;
 using Widely.DataModel.ViewModels.Appusers.ListView;
 using Widely.DataModel.ViewModels.Auth.LogIn;
 using Widely.DataModel.ViewModels.Auth.Token;
@@ -39,6 +40,13 @@ namespace Widely.Infrastructure.AutoMapper
                 .ForMember(dest => dest.RoleDescription, src => src.MapFrom(s => s.Role == null ? string.Empty : s.Role.Description))
                 .ForMember(dest => dest.FullName, src => src.MapFrom(s => $"{s.Title}{s.Fname} {s.Lname}"))
                 ;
+
+            CreateMap<Appusers, AppUserItemViewResponse>()
+                .ForMember(dest => dest.RoleId, src => src.MapFrom(s => s.Role == null ? (int?)null : s.Role.Id))
+                .ForMember(dest => dest.RoleName, src => src.MapFrom(s => s.Role == null ? string.Empty : s.Role.Name))
+                .ForMember(dest => dest.RoleDescription, src => src.MapFrom(s => s.Role == null ? string.Empty : s.Role.Description))
+                ;
+
         }
     }
 }

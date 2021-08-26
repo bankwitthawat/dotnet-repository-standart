@@ -19,11 +19,11 @@ namespace Widely.DataAccess.Repositories.Base
 
         Task<bool> RemoveRangeAsync(IEnumerable<T> entity);
 
-        Task<T> GetAsync(Expression<Func<T, bool>> expression);
+        Task<T> GetAsync(Expression<Func<T, bool>> expression, params Expression<Func<T, object>>[] including);
 
-        Task<List<T>> ListAsync(Expression<Func<T, bool>> expression);
+        Task<List<T>> ListAsync(Expression<Func<T, bool>> expression, params Expression<Func<T, object>>[] including);
 
-        Task<List<T>> All();
+        Task<List<T>> All(params Expression<Func<T, object>>[] including);
 
     }
 }

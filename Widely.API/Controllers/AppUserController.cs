@@ -45,6 +45,14 @@ namespace Widely.API.Controllers
             return Ok(result);
         }
 
+        [ModulePermission("USERS", "EDIT")]
+        [HttpGet("getuserbyid")]
+        public async Task<IActionResult> GetUserById(int id)
+        {
+            var result = await this._appusersService.GetUserById(id);
+            return Ok(result);
+        }
+
 
         [ModulePermission("USERS", "CREATE")]
         [HttpPost("craete-user")]
@@ -55,5 +63,12 @@ namespace Widely.API.Controllers
         }
 
 
+        [ModulePermission("USERS", "EDIT")]
+        [HttpPut("unlock")]
+        public async Task<IActionResult> UnlockUser(AppUserUnlockRequest request)
+        {
+            var result = await this._appusersService.Unlock(request);
+            return Ok(result);
+        }
     }
 }

@@ -10,6 +10,7 @@ using Widely.BusinessLogic.Utilities;
 using Widely.DataAccess.DataContext.Entities;
 using Widely.DataAccess.Repositories.Appusers;
 using Widely.DataAccess.Repositories.UnitOfWork;
+using Widely.DataModel.ViewModels.Appusers.ItemView;
 using Widely.DataModel.ViewModels.Appusers.ListView;
 using Widely.DataModel.ViewModels.Common;
 using Widely.Infrastructure.Exceptions;
@@ -57,7 +58,14 @@ namespace Widely.BusinessLogic.Services.AppUser
 
             if (filter?.criteria?.isActive != null)
             {
-                filterData = filterData.Where(x => x.IsActive == filter.criteria.isActive.Value).ToList();
+                if (filter.criteria.isActive == true)
+                {
+                    filterData = filterData.Where(x => x.IsActive == true).ToList();
+                }
+                else
+                {
+                    filterData = filterData.Where(x => x.IsActive == false || x.IsActive == null).ToList();
+                }
             }
 
 
@@ -99,6 +107,26 @@ namespace Widely.BusinessLogic.Services.AppUser
                 }
             };
 
+        }
+
+        public async Task<ServiceResponse<AppUserItemViewResponse>> GetUserById(int id)
+        {
+            ServiceResponse<AppUserItemViewResponse> response = new ServiceResponse<AppUserItemViewResponse>();
+
+            // init DbSet
+            var userRepository = _unitOfWork.AsyncRepository<Appusers>();
+
+            var user = await userRepository.GetAsync(x => x.Id == id, i => i.Role);
+
+            if (user != null)
+            {
+                var dtoResult = _mapper.Map<AppUserItemViewResponse>(user);
+                response.Data = dtoResult;
+                response.Success = true;
+                response.Message = "OK";
+            }
+
+            return response;
         }
     
         public async Task<ServiceResponse<List<OptionItems>>> GetRoleList()
@@ -164,6 +192,33 @@ namespace Widely.BusinessLogic.Services.AppUser
             response.Data = true;
             response.Success = true;
             response.Message = "Create Successfully. !!";
+
+            return response;
+        }
+
+        public async Task<ServiceResponse<bool>> Unlock(AppUserUnlockRequest request)
+        {
+            var transactionDate = DateTime.Now;
+            ServiceResponse<bool> response = new ServiceResponse<bool>();
+
+            //init DbSet
+            var userRepository = _unitOfWork.AsyncRepository<Appusers>();
+            var user = await userRepository.GetAsync(x => x.Id == request.id && x.LoginAttemptCount > 5);
+
+            if (user == null)
+            {
+                throw new AppException("User not found.");
+            }
+
+            user.LoginAttemptCount = 0;
+            user.ModifiedBy = GetUserName();
+            user.ModifiedDate = transactionDate;
+            await userRepository.UpdateAsync(user);
+            await _unitOfWork.CommitAsync();
+
+            response.Data = true;
+            response.Success = true;
+            response.Message = "This user unlock.";
 
             return response;
         }

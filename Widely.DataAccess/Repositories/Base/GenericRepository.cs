@@ -28,18 +28,44 @@ namespace Widely.DataAccess.Repositories.Base
             return true;
         }
 
-        public async Task<List<T>> All()
+        public async Task<List<T>> All(params Expression<Func<T, object>>[] including)
         {
+            if (including != null && including.Length > 0)
+            {
+                var query = _dbSet as IQueryable<T>;
+
+                query = including.Aggregate(query, (current, property) => current.Include(property));
+
+                return await query.AsNoTracking().ToListAsync();
+            }
+
             return await _dbSet.ToListAsync();
         }
 
-        public async Task<T> GetAsync(Expression<Func<T, bool>> expression)
+        public async Task<T> GetAsync(Expression<Func<T, bool>> expression, params Expression<Func<T, object>>[] including)
         {
+            if (including != null && including.Length > 0)
+            {
+                var query = _dbSet as IQueryable<T>;
+
+                query = including.Aggregate(query, (current, property) => current.Include(property));
+
+                return await query.AsNoTracking().FirstOrDefaultAsync(expression);
+            }
+      
             return await _dbSet.FirstOrDefaultAsync(expression);
         }
 
-        public async Task<List<T>> ListAsync(Expression<Func<T, bool>> expression)
+        public async Task<List<T>> ListAsync(Expression<Func<T, bool>> expression, params Expression<Func<T, object>>[] including)
         {
+            if (including != null && including.Length > 0)
+            {
+                var query = _dbSet as IQueryable<T>;
+
+                query = including.Aggregate(query, (current, property) => current.Include(property));
+
+                return await query.AsNoTracking().Where(expression).ToListAsync();
+            }
             return await _dbSet.Where(expression).ToListAsync();
         }
 

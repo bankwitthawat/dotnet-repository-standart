@@ -30,4 +30,15 @@ namespace Widely.DataModel.ViewModels.Appusers.ListView
         public string lName { get; set; }
         public string mobilePhone { get; set; }
     }
+
+    public class AppUserUpdateRequest
+    {
+
+    }
+
+    public class AppUserUnlockRequest
+    {
+        [Required]
+        public int id { get; set; }
+    }
 }
