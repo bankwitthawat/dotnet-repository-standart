@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -219,6 +220,39 @@ namespace Widely.BusinessLogic.Services.AppUser
             response.Data = true;
             response.Success = true;
             response.Message = "This user unlock.";
+
+            return response;
+        }
+
+        public async Task<ServiceResponse<bool>> Update(AppUserUpdateRequest request)
+        {
+            var transactionDate = DateTime.Now;
+            ServiceResponse<bool> response = new ServiceResponse<bool>();
+
+            //init DbSet
+            var userRepository = _unitOfWork.AsyncRepository<Appusers>();
+            var user = await userRepository.GetAsync(x => x.Id == request.id);
+
+            if (user == null)
+            {
+                throw new AppException("User not found.");
+            }
+
+            user.RoleId = request.roleId;
+            user.Fname = !string.IsNullOrEmpty(request.fName) ? request.fName : null;
+            user.Lname = !string.IsNullOrEmpty(request.lName) ? request.lName : null;
+            user.Email = !string.IsNullOrEmpty(request.email) ? request.email : null;
+            user.MobilePhone = !string.IsNullOrEmpty(request.mobilePhone) ? request.mobilePhone : null;
+            user.BirthDate = !string.IsNullOrEmpty(request.birthDate) ? DateTime.ParseExact(request.birthDate.Trim(), "dd/MM/yyyy", CultureInfo.InvariantCulture) : null;
+            user.IsForceChangePwd = request.isForceChangePwd;
+            user.IsActive = request.isActive;
+
+            await userRepository.UpdateAsync(user);
+            await _unitOfWork.CommitAsync();
+
+            response.Data = true;
+            response.Success = true;
+            response.Message = "Successfully.";
 
             return response;
         }

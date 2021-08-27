@@ -62,6 +62,13 @@ namespace Widely.API.Controllers
             return Ok(result);
         }
 
+        [ModulePermission("USERS", "EDIT")]
+        [HttpPut("update-user")]
+        public async Task<IActionResult> UpdateUser(AppUserUpdateRequest request)
+        {
+            var result = await this._appusersService.Update(request);
+            return Ok(result);
+        }
 
         [ModulePermission("USERS", "EDIT")]
         [HttpPut("unlock")]

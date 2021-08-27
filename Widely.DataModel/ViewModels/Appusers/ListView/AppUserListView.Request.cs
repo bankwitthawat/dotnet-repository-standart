@@ -33,7 +33,19 @@ namespace Widely.DataModel.ViewModels.Appusers.ListView
 
     public class AppUserUpdateRequest
     {
-
+        [Required]
+        public int id { get; set; }
+        [Required]
+        public string username { get; set; }
+        [Required]
+        public int roleId { get; set; }
+        public bool isForceChangePwd { get; set; }
+        public bool isActive { get; set; }
+        public string email { get; set; }
+        public string fName { get; set; }
+        public string lName { get; set; }
+        public string mobilePhone { get; set; }
+        public string birthDate { get; set; }
     }
 
     public class AppUserUnlockRequest
