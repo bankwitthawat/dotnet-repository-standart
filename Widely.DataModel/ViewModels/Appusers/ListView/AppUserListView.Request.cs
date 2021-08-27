@@ -53,4 +53,15 @@ namespace Widely.DataModel.ViewModels.Appusers.ListView
         [Required]
         public int id { get; set; }
     }
+
+    public class AppUserChangePassowrdRequest
+    {
+        [Required]
+        public int id { get; set; }
+        [Required]
+        public string password { get; set; }
+        [Required]
+        public string passwordConfirm { get; set; }
+        public bool isForceChangePwd { get; set; }
+    }
 }

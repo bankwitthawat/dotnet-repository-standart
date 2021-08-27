@@ -71,6 +71,16 @@ namespace Widely.API.Controllers
         }
 
         [ModulePermission("USERS", "EDIT")]
+        [HttpPut("change-password")]
+        public async Task<IActionResult> ChangePassword(AppUserChangePassowrdRequest request)
+        {
+            var result = await this._appusersService.ChangePassword(request);
+            return Ok(result);
+        }
+
+        
+
+        [ModulePermission("USERS", "EDIT")]
         [HttpPut("unlock")]
         public async Task<IActionResult> UnlockUser(AppUserUnlockRequest request)
         {

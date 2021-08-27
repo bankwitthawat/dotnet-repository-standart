@@ -246,6 +246,46 @@ namespace Widely.BusinessLogic.Services.AppUser
             user.BirthDate = !string.IsNullOrEmpty(request.birthDate) ? DateTime.ParseExact(request.birthDate.Trim(), "dd/MM/yyyy", CultureInfo.InvariantCulture) : null;
             user.IsForceChangePwd = request.isForceChangePwd;
             user.IsActive = request.isActive;
+            user.ModifiedBy = GetUserName();
+            user.ModifiedDate = transactionDate;
+
+            await userRepository.UpdateAsync(user);
+            await _unitOfWork.CommitAsync();
+
+            response.Data = true;
+            response.Success = true;
+            response.Message = "Successfully.";
+
+            return response;
+        }
+
+        public async Task<ServiceResponse<bool>> ChangePassword(AppUserChangePassowrdRequest request)
+        {
+            var transactionDate = DateTime.Now;
+            ServiceResponse<bool> response = new ServiceResponse<bool>();
+
+            //init DbSet
+            var userRepository = _unitOfWork.AsyncRepository<Appusers>();
+            var user = await userRepository.GetAsync(x => x.Id == request.id);
+
+            if (user == null)
+            {
+                throw new AppException("User not found.");
+            }
+            
+            if (request.password != request.passwordConfirm)
+            {
+                throw new AppException("Password does match.");
+            }
+
+            PasswordHashUtility.CreatePasswordHash(user.Username, request.password, out byte[] passwordHash, out byte[] passwordSalt);
+
+            user.PasswordHash = passwordHash;
+            user.PasswordSalt = passwordSalt;
+            user.IsForceChangePwd = request.isForceChangePwd;
+            user.LastChangePwd = transactionDate;
+            user.ModifiedBy = GetUserName();
+            user.ModifiedDate = transactionDate;
 
             await userRepository.UpdateAsync(user);
             await _unitOfWork.CommitAsync();
