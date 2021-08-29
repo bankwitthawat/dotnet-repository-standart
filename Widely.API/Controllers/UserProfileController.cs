@@ -31,5 +31,29 @@ namespace Widely.API.Controllers
             var result = await this._userProfileService.ForceChangePassword(request);
             return Ok(result);
         }
+
+        [ModulePermission("*", "*")]
+        [HttpPut("change-password")]
+        public async Task<IActionResult> ChangePassword(UserProfileChangePasswordRequest request)
+        {
+            var result = await this._userProfileService.ChangePassword(request);
+            return Ok(result);
+        }
+
+        [ModulePermission("*", "*")]
+        [HttpGet("getuserprofile")]
+        public async Task<IActionResult> GetUserProfile()
+        {
+            var result = await this._userProfileService.GetUserProfile();
+            return Ok(result);
+        }
+
+        [ModulePermission("*", "*")]
+        [HttpPut("updateuserprofile")]
+        public async Task<IActionResult> UpdateUserProfile(UserProfileUpdateRequest request)
+        {
+            var result = await this._userProfileService.UpdateUserProfile(request);
+            return Ok(result);
+        }
     }
 }

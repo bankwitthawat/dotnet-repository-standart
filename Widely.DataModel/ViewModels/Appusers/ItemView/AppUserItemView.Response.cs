@@ -15,17 +15,17 @@ namespace Widely.DataModel.ViewModels.Appusers.ItemView
         public string RoleDescription { get; set; }
         public string FName { get; set; }
         public string LName { get; set; }
-        public string BirthDate { get; set; }
+        public DateTime? BirthDate { get; set; }
         public string Email { get; set; }
         public string MobilePhone { get; set; }
         public bool IsActive { get; set; }
         public bool? IsForceChangePwd { get; set; }
         public int LoginAttemptCount { get; set; }
-        public string LastLogin { get; set; }
-        public string LastChangePwd { get; set; }
+        public DateTime? LastLogin { get; set; }
+        public DateTime? LastChangePwd { get; set; }
         public string CreatedBy { get; set; }
-        public string CreatedDate { get; set; }
+        public DateTime? CreatedDate { get; set; }
         public string ModifiedBy { get; set; }
-        public string ModifiedDate { get; set; }
+        public DateTime? ModifiedDate { get; set; }
     }
 }
