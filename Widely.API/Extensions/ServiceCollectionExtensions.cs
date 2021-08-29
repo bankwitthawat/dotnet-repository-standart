@@ -11,6 +11,7 @@ using Widely.BusinessLogic.Services.AppRole;
 using Widely.BusinessLogic.Services.AppUser;
 using Widely.BusinessLogic.Services.Auth;
 using Widely.BusinessLogic.Services.Base;
+using Widely.BusinessLogic.Services.UserProfile;
 using Widely.BusinessLogic.Utilities;
 using Widely.DataAccess.DataContext;
 using Widely.DataAccess.Repositories.Approles;
@@ -18,6 +19,7 @@ using Widely.DataAccess.Repositories.Appusers;
 using Widely.DataAccess.Repositories.Auth;
 using Widely.DataAccess.Repositories.Base;
 using Widely.DataAccess.Repositories.UnitOfWork;
+using Widely.DataAccess.Repositories.UserProfile;
 using Widely.Infrastructure.AutoMapper;
 
 namespace Widely.API.Extensions
@@ -31,6 +33,7 @@ namespace Widely.API.Extensions
                 .AddScoped<IAuthRepository, AuthRepository>()
                 .AddScoped<IAppusersRepository, AppusersRepository>()
                 .AddScoped<IApprolesRepository, ApprolesRepository>()
+                .AddScoped<IUserProfileRepository, UserProfileRepository>()
                 //add new repository here.
                 ;
         }
@@ -58,6 +61,7 @@ namespace Widely.API.Extensions
                 .AddScoped<AuthService>()
                 .AddScoped<ApprolesService>()
                 .AddScoped<AppusersService>()
+                .AddScoped<UserProfileService>()
                 // add new service here.
                 ;
         }
