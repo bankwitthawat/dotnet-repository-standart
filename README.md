@@ -192,5 +192,5 @@ public async Task<IActionResult> GetList(Model request)
 }
 ```
 
-
+> Permission สามารถเลือกใส่ได้อย่างเดียวเท่านั้น เช่น *, CREATE, VIEW, EDIT, DELETE
 
