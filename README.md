@@ -49,7 +49,7 @@ This is backend API standart for development.
 - Extensions
   > ใช้เก็บไฟล์ที่เกี่ยวกับการตั้งค่าในระดับ Middlware
 </details>
-----------------------------------------------------------
+
 <details>
 <summary>Widely.BusinessLogic</summary>
 
@@ -58,7 +58,7 @@ This is backend API standart for development.
 - Utillities
   > ใช้เก็บไฟล์คลาสส่วนกลางเพื่อให้ส่วนอื่นๆสามารถเรียกใช้ได้ง่าย
 </details>
-----------------------------------------------------------
+
 <details>
 <summary>Widely.DataAccess</summary>
 
@@ -67,19 +67,18 @@ This is backend API standart for development.
 - Repositories
   > ใช้เก็บ module repository เช่น interface, class
 </details>
-----------------------------------------------------------
+
 <details>
 <summary>Widely.DataModel</summary>
 
 > ใช้เก็บไฟล์ viewmodel เพื่อการรับส่งข้อมูลจาก frontend
 </details>
-----------------------------------------------------------
+
 <details>
 <summary>Widely.Infrastructure</summary>
 
 > ใช้เก็บไฟล์ config สำหรับThird party library
 </details>
-----------------------------------------------------------
 <br /><br />
 
 ## Database Configuration
