@@ -257,8 +257,8 @@ A Generic Repository Pattern in C# typically does at least 8 operations are as f
 | UpdateAsync       | <T\>                 | <T\>        | Update a single record |
 | RemoveAsync       | <T\>                 | boolean     | Remove a single record |
 | RemoveRangeAsync  | IEnumerable<T\>      | boolean     | Remove all record of collection |
-| GetAsync | Expression<Func<T, bool>> , params Expression<Func<T, object>>[] | <T\> | Selecting a single record based on its primary key |
-| ListAsync | Expression<Func<T, bool>> , params Expression<Func<T, object>>[] | List<T\> | Selecting any records from a table |
+| GetAsync | Expression<Func<T, bool>>, <br />params Expression<Func<T, object>>[] | <T\> | Selecting a single record based on its primary key |
+| ListAsync | Expression<Func<T, bool>>,<br /> params Expression<Func<T, object>>[] | List<T\> | Selecting any records from a table |
 | All | params Expression<Func<T, object>>[] | List<T\> | Selecting all records from a table |
 
 <!-- #### Implementation
