@@ -9,13 +9,13 @@ This is backend API standart for development.
 - [Security](#security)
     - [Jason Web Token](#json-web-token)
     - [Authorize Attributes](#authorize-attributes)
-- Dependencies Injection
-    - Repositories
-      - GenericRepository Class (Common)
-      - Repository Class (By Module)
-    - Services
-      - BaseService Class (Common)
-      - Service Class (By Module)
+- [Dependencies Injection](#dependencies-injection)
+- [Repositories](#repositories)
+  - GenericRepository Class (Common)
+  - Repository Class (By Module)
+- Services
+  - BaseService Class (Common)
+  - Service Class (By Module)
 - Swagger
 - Logger
 - Error Handling
@@ -99,7 +99,7 @@ This is backend API standart for development.
   //add application repositories
   services
      .AddHttpContext()
-     .AddDatabase(Configuration) // <-- Add here.
+     .AddDatabase(Configuration) // <-- Add this.
      .AddUnitOfWork()
      .AddRepositories()
      .AddBusinessServices()
@@ -115,7 +115,7 @@ Example:
 ```C#
 [Route("api/[controller]")]
 [ApiController]
-[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)] //<-- Add here
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)] //<-- Add this
 public class ExampleController : ControllerBase 
 {
 
@@ -191,6 +191,58 @@ public async Task<IActionResult> GetList(Model request)
     return Ok(result);
 }
 ```
-
 > Permission สามารถเลือกใส่ได้อย่างเดียวเท่านั้น เช่น *, CREATE, VIEW, EDIT, DELETE
 
+<br /><br />
+
+## Dependencies Injection
+ในการตั้งค่าทุกอย่างที่เกี่ยวกับ DI สามารถทำได้ที่ไฟล์ `ServiceCollectionExtensions.cs` และลงทะเบียนที่ไฟล์ `Startup.cs`
+
+```C#
+//Startup.cs
+ services
+    .AddHttpContext() // registration for httpcontext
+    .AddDatabase(Configuration) // registration for database
+    .AddUnitOfWork() // registration for unit of work
+    .AddRepositories() // registration for repository
+    .AddBusinessServices() // registration for service
+    .AddAutoMapper() // registration for automapper file
+    ;
+```
+
+Example: Add new a service file
+```C#
+//ServiceCollectionExtensions.cs
+public static IServiceCollection AddBusinessServices(this IServiceCollection services)
+{
+    return services
+        .AddScoped<JwtManager>()
+        .AddScoped<BaseService>()
+        .AddScoped<AuthService>()
+        .AddScoped<ApprolesService>()
+        .AddScoped<AppusersService>()
+        .AddScoped<UserProfileService>()
+        .AddScoped<ExampleService>() //<----- add new service here.
+        ;
+}
+```
+
+Example: Add new a repository file
+```C#
+//ServiceCollectionExtensions.cs
+public static IServiceCollection AddRepositories(this IServiceCollection services)
+{
+    return services
+        .AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>))
+        .AddScoped<IAuthRepository, AuthRepository>()
+        .AddScoped<IAppusersRepository, AppusersRepository>()
+        .AddScoped<IApprolesRepository, ApprolesRepository>()
+        .AddScoped<IUserProfileRepository, UserProfileRepository>()
+        .AddScoped<IExampleRepository, ExampleRepository>() //<----- add new repository here.
+        ;
+}
+```
+<br /><br />
+
+## Repositories
+Repository คือ คลาสสำหรับเก็บโครงสร้างในการ query (data stored)
