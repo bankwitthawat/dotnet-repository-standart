@@ -246,7 +246,7 @@ public static IServiceCollection AddRepositories(this IServiceCollection service
 
 ## Repositories
 The Repository Design Pattern in C# Mediates between the domain and the data mapping layers using a collection-like interface for accessing the domain objects.  
-<br />`A generic repository is often used with the entity framework to speed up the process of creating a data layer. In most cases this is a generalization too far and it can be a trap for lazy developers. `[*Ben Morris*](https://www.ben-morris.com/)
+<br />`A generic repository is often used with the entity framework to speed up the process of creating a data layer. In most cases this is a generalization too far and it can be a trap for lazy developers.` [*Ben Morris*](https://www.ben-morris.com/)
 
 ### Generic Repository
 A Generic Repository Pattern in C# typically does at least 8 operations are as follows
