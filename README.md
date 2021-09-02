@@ -11,7 +11,7 @@ This is backend API standart for development.
     - [Authorize Attributes](#authorize-attributes)
 - [Dependencies Injection](#dependencies-injection)
 - [Repositories](#repositories)
-  - GenericRepository Class (Common)
+  - [GenericRepository Class (Common)](#generic-repository)
   - Repository Class (By Module)
 - Services
   - BaseService Class (Common)
@@ -245,4 +245,23 @@ public static IServiceCollection AddRepositories(this IServiceCollection service
 <br /><br />
 
 ## Repositories
-Repository คือ คลาสสำหรับเก็บโครงสร้างในการ query (data stored)
+The Repository Design Pattern in C# Mediates between the domain and the data mapping layers using a collection-like interface for accessing the domain objects.  
+<br />`A generic repository is often used with the entity framework to speed up the process of creating a data layer. In most cases this is a generalization too far and it can be a trap for lazy developers. `[*Ben Morris*](https://www.ben-morris.com/)
+
+### Generic Repository
+A Generic Repository Pattern in C# typically does at least 8 operations are as follows
+| Operation         |  Input               |  Output     |  Remark  |
+|:------------------|:---------------------|:------------|:---------|
+| AddAsync          | <T\>                 | <T\>        | Insert a single record |
+| AddRangeAsync     | IEnumerable<T\>      | boolean     | Insert all record of collection |
+| UpdateAsync       | <T\>                 | <T\>        | Update a single record |
+| RemoveAsync       | <T\>                 | boolean     | Remove a single record |
+| RemoveRangeAsync  | IEnumerable<T\>      | boolean     | Remove all record of collection |
+| GetAsync | Expression<Func<T, bool>> , params Expression<Func<T, object>>[] | <T\> | Selecting a single record based on its primary key |
+| ListAsync | Expression<Func<T, bool>> , params Expression<Func<T, object>>[] | List<T\> | Selecting any records from a table |
+| All | params Expression<Func<T, object>>[] | List<T\> | Selecting all records from a table |
+
+<!-- #### Implementation
+```C#
+
+``` -->
