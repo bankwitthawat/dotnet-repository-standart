@@ -17,10 +17,10 @@ This is backend API standart for development.
   - [BaseService Class (Common)](#baseservice-class-common)
   - [Service Class (By Module)](#service-class-by-module)
 - [Swagger](#swagger)
-- Logger
+- [Logging](#logging)
 - Error Handling
 - AutoMapper
-- Example
+
 
 # Contents
 ## Prerequisites
@@ -380,7 +380,7 @@ public class ExampleController : ControllerBase
 
     public ExampleController(ExampleService exampleService) // #2 add this
     {
-        this._exampleService = exampleService;  // ## add this
+        this._exampleService = exampleService;  // #3 add this
     }
 
     [ModulePermission("USERS", "*")]
@@ -395,3 +395,14 @@ public class ExampleController : ControllerBase
 <br /><br />
 
 ## Swagger
+swagger คือ api document โดยใช้ภาษา xml ในการเขียน document เพิ่มเติมได้ และสามารถทดสอบการ input, output ของข้อมูลได้ [*Documentation*](https://docs.microsoft.com/en-us/aspnet/core/tutorials/getting-started-with-swashbuckle?view=aspnetcore-5.0&tabs=visual-studio)
+
+> ในกรณีที่ controller หรือ action ถูกคุมด้วย header attributes `[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]` จำเป็นต้อง input access token (jwt) ผ่านทางหน้า api document (รูปกุญแจ)
+
+<br /><br />
+
+## Logging
+การ logging เราใช้ [**NLog**](https://nlog-project.org/) ในการ logging ภายในต่าง ๆ เช่น exception, auth [*Documentation*](https://github.com/NLog/NLog/wiki/Getting-started-with-ASP.NET-Core-5)
+
+- สามารถ config ได้ที่ `Widely.API` > `nlog.config`
+- กรณีเกิดการ exception จากระบบจะถูก logging โดยการเขียนเป็น txt file และบน database
