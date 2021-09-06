@@ -12,7 +12,7 @@ This is backend API standart for development.
 - [Dependencies Injection](#dependencies-injection)
 - [Repositories](#repositories)
   - [GenericRepository Class (Common)](#generic-repository)
-  - Repository Class (By Module)
+  - [Repository Class (By Module)](#repository-class)
 - Services
   - BaseService Class (Common)
   - Service Class (By Module)
@@ -261,7 +261,100 @@ A Generic Repository Pattern in C# typically does at least 8 operations are as f
 | ListAsync | Expression<Func<T, bool>>,<br /> params Expression<Func<T, object>>[] | List<T\> | Selecting any records from a table |
 | All | params Expression<Func<T, object>>[] | List<T\> | Selecting all records from a table |
 
-<!-- #### Implementation
+ #### Implementation
 ```C#
+public async Task<ServiceResponse<AppUserItemViewResponse>> GetUserById(int id)
+{
+    ServiceResponse<AppUserItemViewResponse> response = ServiceResponse<AppUserItemViewResponse>();
+    
+    // init DbSet
+    // # เรียกใช้ AsyncRepository จาก unit of work โดยต้องกำหนด model เพื่อรับส่งข้อมูลจาก database
+    var userRepository = _unitOfWork.AsyncRepository<Appusers>();
 
-``` -->
+    // call userRepository mathod เพื่อเรียกใช้ GetAsync สำหรับการ query data
+    // # i => i.Role คือการขอข้อมูลที่เกี่ยวข้องกับตาราง Role มาด้วย (include)
+    var user = await userRepository.GetAsync(x => x.Id == id, i => i.Role);
+
+    if (user != null)
+    {
+        var dtoResult = _mapper.Map<AppUserItemViewResponse>(user);
+        response.Data = dtoResult;
+        response.Success = true;
+        response.Message = "OK";
+    }
+
+    return response;
+}
+```
+
+### Repository class
+ในกรณีที่เราจำเป็นต้องเรียกใช้งานจากข้อมูลหลายๆตาราง (join table multiple) เราสามารถสร้าง repository class ของตัวเองเพื่อเก็บ method ที่จำเป็นภายในนั้นได้
+
+#### Getting Started
+1. สร้าง repository ของตัวเองได้ที่ `Widely.DataAccess` > `Repositories`
+2. สร้าง folder โดยใช้ชื่อตาม module ของตัวเอง
+3. สร้าง interface โดยใช้ชื่อตาม module ของตัวเองเช่น `IExampleRepository.cs`
+4. สร้าง class โดยใช้ชื่อตาม module ของตัวเองเช่น `ExampleRepository.cs`
+5. กำหนด [Dependencies Injection](#dependencies-injection) 
+
+#### Implementation
+```C#
+// repository interface
+ public interface IExampleRepository : IGenericRepository<Widely.DataAccess.DataContext.Entities.Appusers>
+{
+    Task<List<Widely.DataAccess.DataContext.Entities.Appusers>> GetUserAllRelated();
+}
+```
+
+```C#
+// repository class
+ public class ExampleRepository : GenericRepository<Widely.DataAccess.DataContext.Entities.Appusers>, IAppusersRepository
+{
+    private readonly WidelystandartContext _context;
+    public ExampleRepository(WidelystandartContext context) : base(context)
+    {
+        _context = context;
+    
+    public async Task<List<DataContext.Entities.Appusers>> GetUserAllRelated()
+    {
+        var result = await _context.Appusers
+            .Include(i => i.Role)
+            .ToListAsync()
+        return result;
+    }
+}
+```
+
+```C#
+// service file
+public class ExampleService
+{
+    private readonly IExampleRepository _exampleRepository; // #1. add this
+
+    public ExampleService(IExampleRepository exampleRepository)  // #2. add this
+    {
+        this._exampleRepository = exampleRepository; // #3. add this
+    }
+
+    public async Task<ServiceResponse<AppUserItemViewResponse>> GetUser()
+    {
+
+        ServiceResponse<AppUserItemViewResponse> response = new ServiceResponse<AppUserItemViewResponse>();
+
+        // init DbSet
+        var userRepository = _unitOfWork.AsyncRepository<Appusers>();
+
+        // call here
+        var result = await _appusersRepository.GetUserAllRelated();
+
+        if (result != null)
+        {
+            var dtoResult = _mapper.Map<AppUserItemViewResponse>(user);
+            response.Data = dtoResult;
+            response.Success = true;
+            response.Message = "OK";
+        }
+        return response;
+    }
+}
+```
