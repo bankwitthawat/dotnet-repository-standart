@@ -13,10 +13,10 @@ This is backend API standart for development.
 - [Repositories](#repositories)
   - [GenericRepository Class (Common)](#generic-repository)
   - [Repository Class (By Module)](#repository-class)
-- Services
-  - BaseService Class (Common)
-  - Service Class (By Module)
-- Swagger
+- [Services](#services)
+  - [BaseService Class (Common)](#baseservice-class-common)
+  - [Service Class (By Module)](#service-class-by-module)
+- [Swagger](#swagger)
 - Logger
 - Error Handling
 - AutoMapper
@@ -358,3 +358,40 @@ public class ExampleService
     }
 }
 ```
+<br /><br />
+
+## Services
+### BaseService Class (Common)
+BaseService คือ class ตรงกลางที่ให้ไฟล์ service สามารถเรียกใช้เพื่อทราบข้อมูลเกี่ยวกับ http context นั้น ๆ request เข้ามาเช่น userid, username, ip address ต่าง ๆ
+
+### Service Class (By Module)
+#### Getting Started
+1. สร้างไฟล์ service ของตัวเองได้ที่ `Widely.BusinessLogic` > `Services`
+2. สร้าง folder โดยใช้ชื่อตาม module ของตัวเอง
+3. สร้าง service class โดยใช้ชื่อตาม module ของตัวเองเช่น `ExampleService.cs`
+4. กำหนด [Dependencies Injection](#dependencies-injection) 
+
+#### Implementation
+```C#
+// controller file
+public class ExampleController : ControllerBase
+{
+    private readonly ExampleService _exampleService; // #1 add this
+
+    public ExampleController(ExampleService exampleService) // #2 add this
+    {
+        this._exampleService = exampleService;  // ## add this
+    }
+
+    [ModulePermission("USERS", "*")]
+    [HttpPost("list")]
+    public async Task<IActionResult> GetUserList(SearchCriteria<AppUserListViewRequest> request)
+    {
+        var result = await this._appusersService.GetList(request); // call this
+        return Ok(result);
+    }
+}
+```
+<br /><br />
+
+## Swagger
