@@ -22,21 +22,6 @@ namespace Widely.BusinessLogic.Services.Base
             _unitOfWork = unitOfWork;
         }
 
-        //public LoginUserEntity GetCurrentUserInfo()
-        //{
-        //    LoginUserEntity result = new LoginUserEntity();
-        //    result.Username = this.GetUserName();
-        //    if (string.IsNullOrEmpty(result.Username)) return null;
-        //    result.RoleId = this.GetRoleId();
-        //    result.DepartmentCode = this.GetDepartmentCode();
-        //    result.DivisionCode = this.GetDivisionCode();
-        //    result.BranchCode = this.GetBranchCode();
-        //    result.CompanyCode = this.GetCompanyCode();
-        //    result.PositionCode = this.GetPositionCode();
-        //    result.RoleLevel = this.GetRoleLevel();
-        //    return result;
-        //}
-
         public string GetUserID() => _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
         public string GetUserName() => _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Name);
         public int GetRoleId() => Convert.ToInt32(_httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Role));
