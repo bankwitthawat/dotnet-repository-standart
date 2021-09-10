@@ -26,6 +26,7 @@ This is backend API standart for development.
 ## Prerequisites
 - .Net 5.x [*Download*](https://dotnet.microsoft.com/download/dotnet/5.0)
 - Visual Studio 2019 (v16.11 >=) [*Download*](https://visualstudio.microsoft.com/downloads/)
+- MySQL 8.0
 <br /><br />
 
 ## Solution Architecture
