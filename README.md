@@ -18,8 +18,8 @@ This is backend API standart for development.
   - [Service Class (By Module)](#service-class-by-module)
 - [Swagger](#swagger)
 - [Logging](#logging)
-- Error Handling
-- AutoMapper
+- [Error Handling](#error-handling)
+- [AutoMapper](#automapper)
 
 
 # Contents
@@ -406,3 +406,99 @@ swagger คือ api document โดยใช้ภาษา xml ในกา�
 
 - สามารถ config ได้ที่ `Widely.API` > `nlog.config`
 - กรณีเกิดการ exception จากระบบจะถูก logging โดยการเขียนเป็น txt file และบน database
+
+<br /><br />
+
+## Error Handling
+ทุกครั้งที่เกิด error จะถูกจัดการโดย middleware ที่ `WidelyAPI` > `Extensions` > `ExceptionMiddlewareExtensions.cs`
+
+| Excaption |  Status Code |
+|:----------|:------------:|
+| AppException | 400 |
+| UnauthorizeException | 401 |
+| KeyNotFoundException | 404 |
+| Exception (default) | 500 |
+
+> Tips: กรณีต้องการเพิ่ม Exception อื่น ๆ เอง สามารถสร้างเองได้ที่ `Widely.Infrastructure` > `Exception` และนำมาเพิ่มที่ไฟล์ `ExceptionMiddlewareExtensions.cs`
+
+
+### Implementation
+Example 1:
+```C#
+// service file
+public async Task<ServiceResponse<bool>> Update(AppUserUpdateRequest request)
+{
+      var userRepository = _unitOfWork.AsyncRepository<Appusers>();
+      var user = await userRepository.GetAsync(x => x.Id == request.id);
+
+      if (user == null)
+      {
+          throw new AppException("User not found."); // <--- throw here.
+      }
+
+      // else bla bla bla
+}
+```
+
+Example 2:
+```C#
+// service file
+public async Task<ServiceResponse<bool>> Create(AppUserUpdateRequest request)
+{
+      try
+      {
+
+      }
+      catch(Exception ex)
+      {
+          throw new AppException(ex.Message); // <--- throw here.
+      }
+}
+```
+> Tips: ไม่จำเป็นต้องใช้ try catch เสมอไป ตัว middleware จะจัดการ error ให้เองโดยอัตโนมัติ
+
+<br /><br />
+
+## AutoMapper
+หากต้องการ mapping data ระหว่าง model-model สามารถใช้ [**AutoMapper**](https://docs.microsoft.com/en-us/aspnet/core/tutorials/getting-started-with-swashbuckle?view=aspnetcore-5.0&tabs=visual-studio) เป็นทางเลือกและสร้างตัวจัดการได้ที่ `Widely.Infrastructure` > `AutoMapper` > `AutoMapperProfile.cs`
+
+### Implementation
+Example:
+กรณีนี้เราต้องการ map model จาก `Appusers` ซึ่งเป็นข้อมูลจาก database ให้เป็น `AppUserItemViewResponse` เพื่อส่งข้อมูลออกไป
+
+```C#
+namespace Widely.Infrastructure.AutoMapper
+{
+    public class AutoMapperProfile : Profile
+    {
+        public AutoMapperProfile()
+        {
+            CreateMap<Appusers, AppUserItemViewResponse>()
+                .ForMember(dest => dest.RoleId, src => src.MapFrom(s => s.Role == null ? (int?)null : s.Role.Id))
+                .ForMember(dest => dest.RoleName, src => src.MapFrom(s => s.Role == null ? string.Empty : s.Role.Name))
+                .ForMember(dest => dest.RoleDescription, src => src.MapFrom(s => s.Role == null ? string.Empty : s.Role.Description))
+                ;
+
+        }
+    }
+}
+
+```
+
+```C#
+// service file
+public async Task<ServiceResponse<AppUserItemViewResponse>> GetUserById(int id)
+{
+    ServiceResponse<AppUserItemViewResponse> response = ServiceResponse<AppUserItemViewResponse>();
+    var userRepository = _unitOfWork.AsyncRepository<Appusers>();
+    var user = await userRepository.GetAsync(x => x.Id == id, i => i.Rol
+    if (user != null)
+    {
+        var dtoResult = _mapper.Map<AppUserItemViewResponse>(user); // add here
+        response.Data = dtoResult;
+        response.Success = true;
+        response.Message = "OK";
+
+    return response;
+}
+```
