@@ -332,6 +332,9 @@ namespace Widely.DataAccess.DataContext
                 entity.Property(e => e.Username).HasMaxLength(100);
             });
 
+            // for initial data
+            //modelBuilder.Seed();
+
             OnModelCreatingPartial(modelBuilder);
         }
 
