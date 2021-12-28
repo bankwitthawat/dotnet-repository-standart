@@ -1,4 +1,4 @@
-# WidelyNext Standart - Backend API
+# Standart - Backend API
 This is backend API standart for development.
 
 ## Table of contents
